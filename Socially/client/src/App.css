@@ -36,3 +36,16 @@
     transform: rotate(360deg);
   }
 }
+
+.MuiOutlinedInput-notchedOutline {
+  border-color: #1da1f2 !important;
+}
+
+/* .MuiFilledInput-root {
+  border-bottom: 1px solid #1da1f2 !important;
+} */
+
+/* .MuiInput-root {
+  border-bottom: 1px solid #1da1f2 !important;
+} */
+
