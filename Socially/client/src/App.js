@@ -8,6 +8,7 @@ import Messsages from './components/Messages/Messsages';
 import Profile from './components/Profile/Profile';
 import More from './components/More/More';
 import Auth from './components/Authentication/Auth';
+import Signup from './components/Authentication/Signup';
 
 function App() {
   return (
@@ -23,6 +24,8 @@ function App() {
           <Route exact path='/more' element={<More/>}/>
         </Route>
         <Route exact path='/signin' element={<Auth/>}/>
+        <Route exact path='/signup' element={<Signup/>}/>
+
       </Routes>
     </BrowserRouter>
    </div>
