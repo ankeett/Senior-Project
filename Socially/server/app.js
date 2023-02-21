@@ -17,4 +17,10 @@ app.use(cors({
 app.use(bodyParser.urlencoded({limit: "50mb",extended:true}))
 app.use(express.urlencoded({extended: true}));
 
+//import all routes
+const user = require("./routes/userRoutes");
+
+app.use("/api", user);
+
+
 module.exports = app;
