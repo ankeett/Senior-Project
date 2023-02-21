@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import {Box,Drawer,CssBaseline,AppBar,Toolbar,List,Divider, Avatar, MenuItem, Input,Select} from '@mui/material'
+import {Box,Drawer,CssBaseline,AppBar,Toolbar,List,Divider, Avatar, MenuItem, Input,Select, IconButton} from '@mui/material'
 
 
 import HomeIcon from '@mui/icons-material/Home';
@@ -17,11 +17,14 @@ import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined
 import ExpandCircleDownOutlinedIcon from '@mui/icons-material/ExpandCircleDownOutlined';
 
 import CancelIcon from '@mui/icons-material/Cancel';
-import { Button, TextField,Paper } from '@mui/material';
+import { Button,Paper } from '@mui/material';
 import { Link, useNavigate,useLocation,Outlet } from "react-router-dom";
 
 import PublicIcon from '@mui/icons-material/Public';
 import HttpsIcon from '@mui/icons-material/Https';
+import ImageIcon from '@mui/icons-material/Image';
+import GifBoxIcon from '@mui/icons-material/GifBox';
+
 
 const Menus = [
     {title: "Home", src: <HomeOutlinedIcon/>,clicked:<HomeIcon/>, link: '/home' },
@@ -38,6 +41,7 @@ const Nav =()=> {
     const navigate = useNavigate();
     const pathname = useLocation().pathname
     const [status,setStatus] = useState('Everyone');
+    const [images,setImages] = useState([]);
 
     const [open,setOpen] = useState(0);
     console.log(open)
@@ -50,6 +54,25 @@ const Nav =()=> {
     const handlePost = (e) =>{
       e.preventDefault();
       setAdvanced((prevAdvanced)=>!prevAdvanced);
+    }
+
+    const handleImages = (e)=>{
+   
+      const files = Array.from(e.target.files);
+      setImages([]);
+      console.log(files);
+      files.forEach((file)=>{
+          const reader = new FileReader();
+  
+          reader.onload = () => {
+              if (reader.readyState=== 2){
+                  setImages((old)=>[...old, reader.result]);
+              }
+          }
+  
+          reader.readAsDataURL(file);
+      });
+  
     }
     
   return (
@@ -105,7 +128,7 @@ const Nav =()=> {
             <div className='text-end '  ><CancelIcon className='cursor-pointer' onClick={handlePost}/></div>  
             <div className='flex flex-row mb-5 gap-3' >
               <Avatar className='bg-[#1da1f2]'>
-                A
+                {status === 'Anonymous' ? <HttpsIcon/> : <PublicIcon/>}
               </Avatar>
               <Select disableUnderline={true} size='small' className='w-1/4 h-1/9 outline-none' variant="standard" label="Audience" defaultValue={status} onChange={(e)=>{setStatus(e.target.value)}}>
                 <MenuItem value="Everyone">Everyone</MenuItem>
@@ -114,11 +137,34 @@ const Nav =()=> {
             </div> 
             
             <div>
-              <Input disableUnderline={true} multiline placeholder="What's on your mind?" variant="standard" className='border-none w-full ml-6'
+              <Input disableUnderline={true} multiline placeholder="What's on your mind?" variant="standard" className='border-none w-full ml-6 h-full'
               />
             </div>
-            <Divider className='m-5'/>
-            <Button className='text-white bg-[#1da1f2] normal-case text-base float-right'>Post</Button>
+            <Divider className='m-4 mt-7'/>
+
+            
+                <div className='grid grid-cols-2 gap-6'>
+                {images &&
+                      images.map((img,index)=>{
+                        return(
+                          <div key={index} className="">
+                              <IconButton onClick={()=>setImages(images.filter((e)=> e !== img))}><CancelIcon className='object-top'/></IconButton>
+                              <img src={img} height='200' width='200'/>
+                          </div>
+                        )
+                      })
+                    }
+                  
+                </div>
+              <div className='flex flex-row justify-between'>
+                <div>
+                  <label htmlFor="myInput"><ImageIcon className='cursor-pointer text-[#1da1f2] float-left mt-3' style={{ fontSize: '20px'}}/></label>
+                  <input id="myInput" type="file" fullWidth name='image' multiple accept="image/png image/jpeg image/webp" className='hidden  ' onChange = {handleImages}/>
+                  <label htmlFor="myGif"><GifBoxIcon className='cursor-pointer text-[#1da1f2] float-left mt-3' style={{ fontSize: '20px'}}/></label>
+                  <input id="myGif" type="file" fullWidth name='image' multiple accept="image/png image/jpeg image/webp image/gif" className='hidden' onChange = {handleImages}/>
+                </div>
+                <Button className='text-white bg-[#1da1f2] normal-case text-base rounded-full float-right'>Post</Button>
+            </div>
           </Paper>
         </div> : ''
     }
