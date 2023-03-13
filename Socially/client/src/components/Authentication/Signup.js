@@ -1,13 +1,18 @@
-import React,{useState} from 'react'
+import React,{useEffect, useState} from 'react'
 import { Paper,Divider, TextField, Button, Grid,InputAdornment,IconButton,Container } from '@mui/material'
 import { Link } from 'react-router-dom'
 import  VisibilityIcon  from '@mui/icons-material/Visibility';
 import  VisibilityOffIcon  from '@mui/icons-material/VisibilityOff';
+import {login,register} from '../../actions/userAction'
+import {useDispatch,useSelector} from 'react-redux'
+import {useNavigate} from 'react-router-dom'
 
 
 
 const Signup = () => {
     const formRef = React.useRef();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -17,13 +22,28 @@ const Signup = () => {
 
     const handleClickShowPassword = () => setShowPassword(!showPassword);
     const handleMouseDownPassword =() => setShowPassword(!showPassword);
+    const {error, isLoading, isAuthenticated, user } = useSelector(state => state.user);
+
 
     const handleSubmit = (e)=>{
         e.preventDefault();
         formRef.current.reportValidity()
+        if(pw !== cpw){
+            alert("Password does not match")
+        }else{
 
+            dispatch(register(name,email,pw))
+        }
+        
         console.log(name,email,pw,cpw)
     }
+
+    // useEffect(() => {
+    //     if(!user.isActivated){
+    //         navigate('/activate')
+    //     }
+    // }, [user, dispatch])
+
   return (
     <div>
         <Grid container spacing={0} alignItems="center" justifyContent="center" component='main' sx={{ height: "100vh" }}>

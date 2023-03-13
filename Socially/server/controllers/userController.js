@@ -22,7 +22,7 @@ exports.registerUser = async (req, res, next) => {
             name,email,password,
         });
 
-        sendToken(user, 200, res);
+        sendToken(user, 201, res);
 
 
     }
@@ -35,7 +35,7 @@ exports.loginUser = async (req, res, next) => {
     try{
         const {email,password} = req.body;
         const user = await User.findOne({email}).select("+password");
-
+        console.log('sdfssd')
         if(!user){
             res.status(404).json({
                 success: false,
@@ -45,12 +45,8 @@ exports.loginUser = async (req, res, next) => {
         }
 
         if(user && (await bcryptjs.compare(password,user.password))){
-            res.status(200).json({
-                _id: user.id,
-                name: user.name,
-                email: user.email,
-                token: generateToken(user._id),
-            })
+            sendToken(user, 200, res);
+            console.log("send token")
         }else{
             res.status(401).json({
                 success: false,
@@ -58,6 +54,7 @@ exports.loginUser = async (req, res, next) => {
             })
             // throw new Error("Invalid email or password");
         }
+        console.log('sdfssd2')
     }
     catch(error){
         next(error);
@@ -66,6 +63,7 @@ exports.loginUser = async (req, res, next) => {
 
 //generate JWT token and save to cookie
 const generateToken = (id) => {
+    console.log('sdfssdtokengenerate')
     return jwt.sign({ id }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_TIME,
     });
@@ -81,6 +79,7 @@ const sendToken = (user, statusCode, res) => {
             Date.now() + process.env.COOKIE_EXPIRY * 24 * 60 * 60 * 1000
         ),
         httpOnly: true,
+        secure:false,
     };
 
     res.cookie("token", token, options);
@@ -89,6 +88,9 @@ const sendToken = (user, statusCode, res) => {
         token,
         user,
     });
+
+    console.log(token)
+
 }
 
 //send activation email
