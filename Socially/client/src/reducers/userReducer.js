@@ -30,7 +30,8 @@ export const userReducer = (state = {user:{}}, action) => {
                 ...state,
                 loading:false,
                 isAuthenticated:true,
-                user:action.payload
+                user:action.payload,
+                success:true
             }
 
         case LOGIN_FAIL:
@@ -42,9 +43,77 @@ export const userReducer = (state = {user:{}}, action) => {
                 user:null,
                 error: action.payload
             }
+        
+        case ACTIVATE_REQUEST:
+            return{
+                ...state,
+                loading:true,
+                isActivated:false
+            }
 
+        case ACTIVATE_SUCCESS:
+            return{
+                ...state,
+                loading:false,
+                isActivated:true,
+                user:action.payload,
+                success:true
+            }
+        case ACTIVATE_FAIL:
+            return{
+                ...state,
+                loading:false,
+                isActivated:false,
+                error: action.payload
+            }
         default:
             return state;
 
+    }
+}
+
+export const forgotPasswordReducer = (state = {}, action) => {
+    switch(action.type){
+        case FORGOT_PASSWORD_REQUEST:
+            return{
+                ...state,
+                loading:true,
+                error:null
+            }
+        case FORGOT_PASSWORD_SUCCESS:
+            return{
+                ...state,
+                loading:false,
+                message:action.payload
+            }
+        case FORGOT_PASSWORD_FAIL:
+            return{
+                ...state,
+                loading:false,
+                error:action.payload
+            }
+        case RESET_PASSWORD_REQUEST:
+        case CHANGE_PASSWORD_REQUEST:
+            return{
+                ...state,
+                loading:true,
+                error:null
+            }
+        case RESET_PASSWORD_SUCCESS:
+        case CHANGE_PASSWORD_SUCCESS:
+            return{
+                ...state,
+                loading:false,
+                success:action.payload
+            }
+        case RESET_PASSWORD_FAIL:
+        case CHANGE_PASSWORD_FAIL:
+            return{
+                ...state,
+                loading:false,
+                error:action.payload
+            }
+        default:
+            return state;
     }
 }

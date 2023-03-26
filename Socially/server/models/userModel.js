@@ -62,9 +62,9 @@ userSchema.pre("save", async function (next) {
 });
 
 //compare the password
-// userSchema.methods.comparePassword = async function (enteredPassword) {
-//     return await bcryptjs.compare(enteredPassword, this.password);
-// }
+userSchema.methods.matchPassword = async function (enteredPassword) {
+    return await bcryptjs.compare(enteredPassword, this.password);
+}
 
 //returning JWT token
 // userSchema.methods.getJwtToken = function () {

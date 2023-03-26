@@ -33,16 +33,12 @@ const Signup = () => {
         }else{
 
             dispatch(register(name,email,pw))
+            navigate('/activate')
         }
         
         console.log(name,email,pw,cpw)
     }
 
-    // useEffect(() => {
-    //     if(!user.isActivated){
-    //         navigate('/activate')
-    //     }
-    // }, [user, dispatch])
 
   return (
     <div>
@@ -75,7 +71,7 @@ const Signup = () => {
                                 }}          
                         
                         />
-                        <TextField required={true} label="Confirm Password"  onChange={(e)=>{setPw(e.target.value)}} type='password'/>
+                        <TextField required={true} label="Confirm Password"  onChange={(e)=>{setCpw(e.target.value)}} type='password'/>
                         </div>
                         <div className='flex flex-col mt-14 gap-7 align-middle justify-center'>
                             <Button className='text-white bg-[#1da1f2] rounded-full normal-case h-12 text-base' onClick ={handleSubmit} fullWidth>Sign Up</Button>

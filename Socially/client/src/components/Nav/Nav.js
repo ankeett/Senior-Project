@@ -1,6 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import {Box,Drawer,CssBaseline,AppBar,Toolbar,List,Divider, Avatar, MenuItem, Input,Select, IconButton} from '@mui/material'
-
+import {Box,Drawer,CssBaseline,AppBar,Toolbar,List,Divider, Avatar, MenuItem, Input,Select, IconButton} from '@mui/material';
 
 import HomeIcon from '@mui/icons-material/Home';
 import ExploreIcon from '@mui/icons-material/Explore';
@@ -42,8 +41,7 @@ const drawerWidth = 360
 
 const Nav =()=> {
 
-
-  const {user,isAuthenticated} = useSelector(state=>state.user)
+    const {user,isAuthenticated} = useSelector(state=>state.user)
 
     console.log(user);
     const navigate = useNavigate();
@@ -123,20 +121,24 @@ const Nav =()=> {
             </li>
           ))}
 
-          <Button className='text-white bg-[#1da1f2] normal-case h-12 rounded-full text-base' fullWidth onClick={handlePost}>Post</Button>
+          <Button className='text-white bg-[#1da1f2] normal-case h-12 rounded-full text-base w-3/4'  onClick={handlePost}>Post</Button>
 
           
         </List>  
         <div className=' absolute text-center inset-x-0 bottom-0'>
             <Paper elevation={0} className='m-3 p-3 '>
-              <div className='flex flex-row justify-center items-center gap-4'>
-
-              
-              <Avatar>
-                {user.name[0][0]}
-              </Avatar>
-              <p className=' mr-4 text-sm'>{user.name}</p>
-              </div>
+             { user.name ? 
+                <div className='flex flex-row justify-center items-center gap-4'>
+                  <Avatar>
+                    {user.name[0]}
+                  </Avatar>
+                  <p className=' mr-4 text-sm'>{user?.name}</p>
+                </div>
+                :
+                <div className='flex flex-row justify-center items-center gap-4'>
+                  <Button className='text-white bg-[#1da1f2] normal-case h-12 rounded-full text-base w-3/5 mr-16'  onClick={()=>{navigate('/login')}}>Login</Button>
+                </div>
+            }
             </Paper>
       </div> 
             

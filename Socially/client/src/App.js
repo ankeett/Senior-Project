@@ -9,6 +9,12 @@ import Profile from './components/Profile/Profile';
 import More from './components/More/More';
 import Auth from './components/Authentication/Auth';
 import Signup from './components/Authentication/Signup';
+import Activate from './components/Authentication/Activate';
+import CheckActivate from './components/Authentication/CheckActivate';
+import ForgotPw from './components/Authentication/forgotPass';
+import CheckForget from './components/Authentication/CheckForget';
+import ResetPw from './components/Authentication/ResetPw';
+import ChangePassword from './components/Authentication/ChangePw';
 
 function App() {
   return (
@@ -23,8 +29,14 @@ function App() {
           <Route exact path='/profile' element={<Profile/>}/>
           <Route exact path='/more' element={<More/>}/>
         </Route>
-        <Route exact path='/signin' element={<Auth/>}/>
+        <Route exact path='/login' element={<Auth/>}/>
         <Route exact path='/signup' element={<Signup/>}/>
+        <Route exact path='/activate' element={<CheckActivate/>}/>
+        <Route exact path='/activate/:token' element={<Activate/>}/>
+        <Route exact path='/forgotpassword' element={<ForgotPw/>}/>
+        <Route exact path='/checkforgot' element={<CheckForget/>}/>
+        <Route exact path='/api/password/reset/:token' element={<ResetPw/>}/>
+        <Route exact path='/changePassword' element={<ChangePassword/>}/>
 
       </Routes>
     </BrowserRouter>

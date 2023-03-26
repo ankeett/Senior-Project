@@ -102,8 +102,9 @@ exports.sendActivationEmail = async (req,res,next) => {
         //throw new Error("User not found");
     }
 
-    if(!user.isActivated){
-        const activateToken = user.getActivateToken();
+    if(!user?.isActivated){
+
+        console.log(user.getResetPasswordToken());
         await user.save({validateBeforeSave: false});
 
         try{
@@ -170,5 +171,115 @@ exports.activateAccount = async (req,res,next) => {
     await user.save();
 
     sendToken(user, 200, res);
+}
+
+//forgot password
+exports.forgotPassword = async (req,res,next) => {
+    const user = await User.findOne({email: req.body.email});
+    console.log(user)
+    if(!user){
+        res.status(404).json({success:false,message:"User not found"});
+        return;
+        //throw new Error("User not found");
+    }
+    const token = user.getResetPasswordToken();
+    await user.save({validateBeforeSave: false});
+    
+    const resetPasswordURL = `http://localhost:3000/api/password/reset/${token}`;
+    const message = `Your password reset token is as follows:\n\n${resetPasswordURL}\n\nIf you have not requested this email, then please ignore it.`;
+
+    try{
+        await sendEmail({
+            email: user.email,
+            subject: "Password Reset Request",
+            html: `<h1>Hi ${user.name.split(' ')[0]},</h1>
+            <p>${message}</p>
+            <p>Thank you.</p>
+            <p>Regards,</p>
+            <p>Admin</p>
+            `,
+        });
+
+        res.status(200).json({
+            success: true,
+            message: `Email sent to ${user.email} successfully`,
+        });
+    }
+    catch(error){
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+        await user.save({validateBeforeSave: false});
+        res.status(500).json({
+            success:false,
+            message:"Email could not be sent."
+        });
+        //throw new Error("Email could not be sent.");        
+    }
+}
+
+//reset password
+exports.resetPassword = async (req,res,next) => {
+    try{
+        const resetPasswordToken = crypto.createHash("sha256").update(req.params.token).digest("hex");
+
+        const user = await User.findOne({
+            resetPasswordToken,
+            resetPasswordExpire: {$gt: Date.now()},
+        });
+
+        if(!user){
+            return res.status(400).json({
+                success: false,
+                message: "Invalid reset link",
+            });
+            // throw new Error("Invalid reset link");
+        }
+
+        user.password = req.body.password;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+        await user.save();
+
+        sendToken(user, 200, res);
+
+
+    }
+    catch(error){
+        res.status(500).json({
+            success:false,
+            message:"Password could not be reset."
+        });
+        //throw new Error("Password could not be reset.");
+    }
+}
+
+//change password
+exports.changePassword = async (req,res,next) => {
+    try{
+        console.log(req.user.id);
+        const user = await User.findById(req.user.id).select("+password");
+        if(!user){
+            res.status(404).json({success:false,message:"User not found"});
+            return;
+            //throw new Error("User not found");
+        }
+        const isMatch = await user.matchPassword(req.body.prevPassword);
+        if(!isMatch){
+            res.status(401).json({success:false,message:"Incorrect password"});
+            return;
+            //throw new Error("Incorrect password");
+        }
+        user.password = req.body.newPassword;
+        await user.save();
+
+        sendToken(user, 200, res);
+    }
+    catch(error){
+        res.status(500).json({
+            success:false,
+            message:"Password could not be changed."
+        });
+        //throw new Error("Password could not be changed.");
+    }
 }
 
