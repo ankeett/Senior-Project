@@ -1,6 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import {Box,Drawer,CssBaseline,AppBar,Toolbar,List,Divider, Avatar, MenuItem, Input,Select, IconButton} from '@mui/material'
-
+import {Box,Drawer,CssBaseline,AppBar,Toolbar,List,Divider, Avatar, MenuItem, Input,Select, IconButton} from '@mui/material';
 
 import HomeIcon from '@mui/icons-material/Home';
 import ExploreIcon from '@mui/icons-material/Explore';
@@ -25,6 +24,8 @@ import HttpsIcon from '@mui/icons-material/Https';
 import ImageIcon from '@mui/icons-material/Image';
 import GifBoxIcon from '@mui/icons-material/GifBox';
 
+import {useDispatch,useSelector} from 'react-redux'
+
 
 const Menus = [
     {title: "Home", src: <HomeOutlinedIcon/>,clicked:<HomeIcon/>, link: '/home' },
@@ -35,16 +36,20 @@ const Menus = [
     { title: "More", src: <ExpandCircleDownOutlinedIcon/>,clicked:<ExpandCircleDownIcon/> ,link: '/more'},
   ]; 
 
-const drawerWidth = 360;
+const drawerWidth = 360
+
 
 const Nav =()=> {
+
+    const {user,isAuthenticated} = useSelector(state=>state.user)
+
+    console.log(user);
     const navigate = useNavigate();
     const pathname = useLocation().pathname
     const [status,setStatus] = useState('Everyone');
     const [images,setImages] = useState([]);
 
     const [open,setOpen] = useState(0);
-    console.log(open)
 
     useEffect(() => {
       navigate('/home');
@@ -116,9 +121,29 @@ const Nav =()=> {
             </li>
           ))}
 
-          <Button className='text-white bg-[#1da1f2] normal-case h-12 rounded-full text-base' fullWidth onClick={handlePost}>Post</Button>
-        </List>        
+          <Button className='text-white bg-[#1da1f2] normal-case h-12 rounded-full text-base w-3/4'  onClick={handlePost}>Post</Button>
+
+          
+        </List>  
+        <div className=' absolute text-center inset-x-0 bottom-0'>
+            <Paper elevation={0} className='m-3 p-3 '>
+             { user.name ? 
+                <div className='flex flex-row justify-center items-center gap-4'>
+                  <Avatar>
+                    {user.name[0]}
+                  </Avatar>
+                  <p className=' mr-4 text-sm'>{user?.name}</p>
+                </div>
+                :
+                <div className='flex flex-row justify-center items-center gap-4'>
+                  <Button className='text-white bg-[#1da1f2] normal-case h-12 rounded-full text-base w-3/5 mr-16'  onClick={()=>{navigate('/login')}}>Login</Button>
+                </div>
+            }
+            </Paper>
+      </div> 
+            
       </Drawer>
+      
       
     </Box>
 
@@ -172,7 +197,7 @@ const Nav =()=> {
       <Outlet/>
 
     </div>
-
+     
     </div>
   );
 }

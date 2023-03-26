@@ -7,7 +7,6 @@ import {Button,TextField,InputAdornment,IconButton,Paper} from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
 
 
-const drawerWidth = 360;
 
 const Home = () => {
     const [open,setOpen] = useState(0);
@@ -60,10 +59,10 @@ const Home = () => {
 
       <Drawer
         sx={{
-          width: drawerWidth,
+          width: 1/4,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: 360,
+            width: 1/4,
             boxSizing: 'border-box',
           },
         }}

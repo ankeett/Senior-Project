@@ -1,13 +1,18 @@
-import React,{useState} from 'react'
+import React,{useEffect, useState} from 'react'
 import { Paper,Divider, TextField, Button, Grid,InputAdornment,IconButton,Container } from '@mui/material'
 import { Link } from 'react-router-dom'
 import  VisibilityIcon  from '@mui/icons-material/Visibility';
 import  VisibilityOffIcon  from '@mui/icons-material/VisibilityOff';
+import {login,register} from '../../actions/userAction'
+import {useDispatch,useSelector} from 'react-redux'
+import {useNavigate} from 'react-router-dom'
 
 
 
 const Signup = () => {
     const formRef = React.useRef();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -17,13 +22,24 @@ const Signup = () => {
 
     const handleClickShowPassword = () => setShowPassword(!showPassword);
     const handleMouseDownPassword =() => setShowPassword(!showPassword);
+    const {error, isLoading, isAuthenticated, user } = useSelector(state => state.user);
+
 
     const handleSubmit = (e)=>{
         e.preventDefault();
         formRef.current.reportValidity()
+        if(pw !== cpw){
+            alert("Password does not match")
+        }else{
 
+            dispatch(register(name,email,pw))
+            navigate('/activate')
+        }
+        
         console.log(name,email,pw,cpw)
     }
+
+
   return (
     <div>
         <Grid container spacing={0} alignItems="center" justifyContent="center" component='main' sx={{ height: "100vh" }}>
@@ -55,7 +71,7 @@ const Signup = () => {
                                 }}          
                         
                         />
-                        <TextField required={true} label="Confirm Password"  onChange={(e)=>{setPw(e.target.value)}} type='password'/>
+                        <TextField required={true} label="Confirm Password"  onChange={(e)=>{setCpw(e.target.value)}} type='password'/>
                         </div>
                         <div className='flex flex-col mt-14 gap-7 align-middle justify-center'>
                             <Button className='text-white bg-[#1da1f2] rounded-full normal-case h-12 text-base' onClick ={handleSubmit} fullWidth>Sign Up</Button>
