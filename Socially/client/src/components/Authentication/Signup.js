@@ -15,6 +15,7 @@ const Signup = () => {
     const navigate = useNavigate();
 
     const [name, setName] = useState("");
+    const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [pw, setPw] = useState("");
     const [cpw,setCpw] = useState("")
@@ -22,7 +23,7 @@ const Signup = () => {
 
     const handleClickShowPassword = () => setShowPassword(!showPassword);
     const handleMouseDownPassword =() => setShowPassword(!showPassword);
-    const {error, isLoading, isAuthenticated, user } = useSelector(state => state.user);
+    const {error, isLoading, isAuthenticated, user,success } = useSelector(state => state.user);
 
 
     const handleSubmit = (e)=>{
@@ -31,12 +32,12 @@ const Signup = () => {
         if(pw !== cpw){
             alert("Password does not match")
         }else{
-
-            dispatch(register(name,email,pw))
+ 
+            dispatch(register(name,username,email,pw))
             navigate('/activate')
         }
         
-        console.log(name,email,pw,cpw)
+        console.log(name,username,email,pw,cpw)
     }
 
 
@@ -53,6 +54,7 @@ const Signup = () => {
                     <form action="" ref={formRef} onSubmit={handleSubmit}>
                         <div className='flex flex-col gap-7'>
                         <TextField required={true} label="Name"  onChange={(e)=>{setName(e.target.value)}}/>
+                        <TextField required={true} label="username"  onChange={(e)=>{setUsername(e.target.value)}}/>
                         <TextField required={true} label="Email"  onChange={(e)=>{setEmail(e.target.value)}}/>
                         <TextField required={true} label="Password"  onChange={(e)=>{setPw(e.target.value)}}
                                 type={showPassword ?"text":"password"}

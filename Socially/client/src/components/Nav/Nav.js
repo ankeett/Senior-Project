@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import {Box,Drawer,CssBaseline,AppBar,Toolbar,List,Divider, Avatar, MenuItem, Input,Select, IconButton} from '@mui/material';
+import {Box,Drawer,CssBaseline,AppBar,Toolbar,List,Divider, Avatar, MenuItem, Input,Select, IconButton,Chip} from '@mui/material';
 
 import HomeIcon from '@mui/icons-material/Home';
 import ExploreIcon from '@mui/icons-material/Explore';
@@ -25,6 +25,7 @@ import ImageIcon from '@mui/icons-material/Image';
 import GifBoxIcon from '@mui/icons-material/GifBox';
 
 import {useDispatch,useSelector} from 'react-redux'
+import { loadUser } from '../../actions/userAction';
 
 
 const Menus = [
@@ -48,12 +49,25 @@ const Nav =()=> {
     const pathname = useLocation().pathname
     const [status,setStatus] = useState('Everyone');
     const [images,setImages] = useState([]);
-
+    const [tags,setTags] = useState([]);
     const [open,setOpen] = useState(0);
 
     useEffect(() => {
       navigate('/home');
     }, []);
+
+    const handleAdd = (e) =>{
+      if(e.key === 'Enter' && e.target.value !== '')
+      {
+        setTags((prevTags)=>[...prevTags, e.target.value]);
+        e.target.value = '';
+      }
+    }
+
+    const handleDelete = (tagToDelete)=>{
+      setTags(tags.filter((tag) => tag !==tagToDelete));
+    }
+    
 
     const [advanced, setAdvanced] = useState(false);
     const handlePost = (e) =>{
@@ -127,10 +141,10 @@ const Nav =()=> {
         </List>  
         <div className=' absolute text-center inset-x-0 bottom-0'>
             <Paper elevation={0} className='m-3 p-3 '>
-             { user.name ? 
+             { user?.name ? 
                 <div className='flex flex-row justify-center items-center gap-4'>
                   <Avatar>
-                    {user.name[0]}
+                    {user?.name[0]}
                   </Avatar>
                   <p className=' mr-4 text-sm'>{user?.name}</p>
                 </div>
@@ -165,8 +179,26 @@ const Nav =()=> {
               <Input disableUnderline={true} multiline placeholder="What's on your mind?" variant="standard" className='border-none w-full ml-6 h-full'
               />
             </div>
-            <Divider className='m-4 mt-7'/>
+            <Divider className='m-2 mt-7'/>
 
+            <Input disableUnderline={true} placeholder="tags" variant="standard" className='border-none w-full ml-6 h-full mt-2' onKeyDown={handleAdd}
+              />
+            <div className='flex flex-row gap-2'>
+                {tags.map((tag,index)=>{
+                  return(
+                    <Chip
+                      key={index}
+                      style={{margin:'10px 0'}}
+                      value={tag}
+                      onDelete={()=>{handleDelete(tag)}}
+                      label={tag}
+                      varient="outlined"
+                    />
+                  )
+                })}
+              </div>
+              
+              
             
                 <div className='grid grid-cols-2 gap-6'>
                 {images &&

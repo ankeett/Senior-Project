@@ -7,7 +7,7 @@ const sendEmail = require("../utils/sendEmail");
 
 exports.registerUser = async (req, res, next) => {
     try{
-        const {name,email,password} = req.body;
+        const {name,username,email,password} = req.body;
 
         if(!name || !email || !password){
             return res.status(400).json({success:false,message:"Please enter all fields"});
@@ -18,8 +18,14 @@ exports.registerUser = async (req, res, next) => {
         if(existingUser){
             return res.status(400).json({success:false,message:"User already exists"});
         }
+        
+        const existingUsername = await User.findOne({username});
+        if(existingUsername){
+            return res.status(400).json({success:false,message:"Username already exists"});
+        }
+
         const user = await User.create({
-            name,email,password,
+            name,username,email,password,
         });
 
         sendToken(user, 201, res);
@@ -27,7 +33,7 @@ exports.registerUser = async (req, res, next) => {
 
     }
     catch(error){
-        next(error);
+        res.status(500).json({success:false,message:"Internal server error"});
     }
 }
 
@@ -43,7 +49,7 @@ exports.loginUser = async (req, res, next) => {
             })
             // throw new Error("User not found");
         }
-
+        console.log(user)
         if(user && (await bcryptjs.compare(password,user.password))){
             sendToken(user, 200, res);
             console.log("send token")
@@ -72,7 +78,7 @@ const generateToken = (id) => {
 
 //save token into cookies
 const sendToken = (user, statusCode, res) => {
-    const token = generateToken(user._id);
+    const token = generateToken(user.id);
 
     const options = {
         expires: new Date(
@@ -105,6 +111,7 @@ exports.sendActivationEmail = async (req,res,next) => {
     if(!user?.isActivated){
 
         console.log(user.getResetPasswordToken());
+        const activateToken = user.getActivateToken();
         await user.save({validateBeforeSave: false});
 
         try{
@@ -283,3 +290,26 @@ exports.changePassword = async (req,res,next) => {
     }
 }
 
+//load user
+exports.loadUser = async (req,res,next) => {
+    try{
+        const user = await User.findById(req.user.id);
+        if(!user){
+            res.status(404).json({success:false,message:"User not found"});
+            return;
+            //throw new Error("User not found");
+        }
+        res.status(200).json({
+            success:true,
+            user
+        });
+
+    }
+    catch(error){
+        res.status(500).json({
+            success:false,
+            message:"User could not be loaded."
+        });
+        //throw new Error("User could not be loaded.");
+    }
+}

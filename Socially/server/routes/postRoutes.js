@@ -3,9 +3,10 @@ const express = require("express");
 const router = express.Router();  
 
 const {createPost,getPosts,getSinglePost,updatePost,deletePost,getPostsByUser,getLikes,likePost,unlikePost,getComments,createComment,deleteComment} = require("../controllers/postController.js");
+const {isAuthenticatedUser} = require("../middleware/auth.js");
 
 //post routes
-router.route("/post/create").post(createPost);
+router.route("/post/create").post(isAuthenticatedUser,createPost);
 router.route("/post/all").get(getPosts);
 router.route("/post/:id").get(getSinglePost);
 router.route("/post/update/:id").put(updatePost);
