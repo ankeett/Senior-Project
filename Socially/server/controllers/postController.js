@@ -3,9 +3,10 @@ const Post = require('../models/postModel');
 exports.createPost = async (req, res, next) => {
     try{
 
-        const {title,content} = req.body;
+        const {content,tags} = req.body;
+        console.log(req.user)
         const post = await Post.create({
-            title,content,user: req.user.id,
+            content,tags,user: req.user.id,
         });
         res.status(201).json({
             success: true,

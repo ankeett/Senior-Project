@@ -16,7 +16,7 @@ import axios from 'axios';
 
 const host = "http://localhost:4000";
 
-export const register = (name,email,password) => async(dispatch)=>{
+export const register = (name,username,email,password) => async(dispatch)=>{
     try{
         dispatch({type:"REGISTER_REQUEST"});
         const config = {
@@ -25,7 +25,7 @@ export const register = (name,email,password) => async(dispatch)=>{
         }
 
         const {data} = await axios.post(`${host}/api/register`,
-            {name,email,password}
+            {name,username,email,password}
             ,config
         );
         
@@ -132,5 +132,20 @@ export const changePassword = (prevPassword,newPassword) => async(dispatch)=>{
     }
     catch(error){
         dispatch({type:CHANGE_PASSWORD_FAIL,payload:error.response.data.message});
+    }
+}
+
+export const loadUser = () => async(dispatch)=>{
+    try{
+        dispatch({type:"LOAD_REQUEST"});
+        const config = {
+            headers:{"Content-type":"application/json"},
+            withCredentials: true
+        }
+        const {data} = await axios.get(`${host}/api/me`,config);
+        dispatch({type:"LOAD_SUCCESS",payload:data.user});
+    }
+    catch(error){
+        dispatch({type:"LOAD_FAIL",payload:error.response.data.message});
     }
 }

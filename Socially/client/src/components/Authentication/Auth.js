@@ -19,20 +19,21 @@ const Auth = () => {
     const handleClickShowPassword = () => setShowPassword(!showPassword);
     const handleMouseDownPassword =() => setShowPassword(!showPassword);
 
-    const {error, loading, isAuthenticated, user} = useSelector(state => state.user);
+    const {error, loading, isAuthenticated, user,isActivated} = useSelector(state => state.user);
 
     const handleSubmit = (e)=>{
         e.preventDefault();
         formRef.current.reportValidity()
         dispatch(login(email,pw))
     }
+    console.log(user)
 
     useEffect(() => {
         console.log("12341234")
-        if (isAuthenticated && user.isActivated) {
+        if (isAuthenticated && user?.isActivated) {
             navigate('/')
         }
-        else if(isAuthenticated && !user.isActivated){
+        else if(isActivated ){
             navigate('/activate')
         }
     }, [isAuthenticated,user,dispatch,error])

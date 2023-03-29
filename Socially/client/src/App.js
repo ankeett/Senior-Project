@@ -15,11 +15,13 @@ import ForgotPw from './components/Authentication/forgotPass';
 import CheckForget from './components/Authentication/CheckForget';
 import ResetPw from './components/Authentication/ResetPw';
 import ChangePassword from './components/Authentication/ChangePw';
+import LoadDetails from './components/Home/load';
 
 function App() {
   return (
    <div>
     <BrowserRouter>
+      <LoadDetails/>
       <Routes>
         <Route exact path="" element={<Nav/>}>
           <Route exact path='/home' element={<Home/>}/>

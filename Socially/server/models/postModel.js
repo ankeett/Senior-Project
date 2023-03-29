@@ -6,12 +6,6 @@ const postSchema = new mongoose.Schema({
         ref: "User",
         required: true,
     },
-    title: {
-        type: String,
-        required: [true, "Please enter post title"],
-        trim: true,
-        maxLength: [100, "Post title cannot exceed 100 characters"],
-    },
     content: {
         type: String,
         required: [true, "Please enter post content"],
@@ -67,6 +61,7 @@ const postSchema = new mongoose.Schema({
     tags: [
         {
             type: String,
+            required: true,
         },
     ],
     visibility: {

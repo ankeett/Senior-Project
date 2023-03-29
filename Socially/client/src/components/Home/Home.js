@@ -5,6 +5,7 @@ import Divider from '@mui/material/Divider';
 
 import {Button,TextField,InputAdornment,IconButton,Paper} from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
+import Feed from '../Post/Feed';
 
 
 
@@ -54,7 +55,9 @@ const Home = () => {
                 <Button className={`text-gray-800 font-bold normal-case ${open === 1 ? "underline underline-offset-[16px] decoration-4 text-[#1da1f2]" : ""}`} fullWidth onClick={()=>{setOpen(1)}}>
                     Following
                 </Button>
+
             </div>
+                <Feed/>
         </Box>
 
       <Drawer
