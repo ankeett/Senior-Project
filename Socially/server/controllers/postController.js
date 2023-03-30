@@ -1,4 +1,5 @@
 const Post = require('../models/postModel');
+const User = require('../models/userModel');
 
 exports.createPost = async (req, res, next) => {
     try{
@@ -10,7 +11,7 @@ exports.createPost = async (req, res, next) => {
         });
         res.status(201).json({
             success: true,
-            post,
+            post
         })
 
     }
@@ -21,14 +22,51 @@ exports.createPost = async (req, res, next) => {
 
 exports.getPosts = async (req, res, next) => {
     try{
-        const posts = await Post.find();
+        const postsWithoutUser = await Post.find();
+
+        //find the respective user for each post
+        const posts = await Promise.all(postsWithoutUser.map(async post => {
+            let user = await User.findById(post.user);
+            post = post.toJSON();
+            post.user = user;
+            return post;
+        }))
+
+        console.log(posts)
         res.status(200).json({
             success: true,
             posts,
         })
     }
     catch(error){
-        next(error);
+        res.status(404).json({
+            success: false,
+            message: "Posts not found",
+        })
+    }
+}
+
+exports.getUserDetails = async (req, res, next) => {
+    try{
+        const user = await User.findById(req.params.id);
+        if(!user){
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            })
+        }
+        res.status(200).json({
+            success: true,
+            user,
+        })
+
+    }
+    catch(error){
+        res.status(404).json({
+            success: false,
+            message: "User not found",
+        })
+
     }
 }
 

@@ -7,7 +7,7 @@ import {
 } from '../constants/postConstants';
 import axios from 'axios';
 
-export const postReducer = (state = {post:{}}, action) => {
+export const postReducer = (state = {post:[]}, action) => {
     switch(action.type){
         case CREATE_POST_REQUEST:
         case FETCH_POSTS_REQUEST:

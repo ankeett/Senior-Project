@@ -66,6 +66,24 @@ export const userReducer = (state = {user:{}}, action) => {
                 isActivated:false,
                 error: action.payload
             }
+            // case USER_DETAILS_REQUEST:
+            //     return{
+            //         ...state,
+            //         loading:true,
+            //         error:null
+            //     }
+            // case USER_DETAILS_SUCCESS:
+            //     return{
+            //         ...state,
+            //         loading:false,
+            //         user:action.payload
+            //     }
+            // case USER_DETAILS_FAIL:
+            //     return{
+            //         ...state,
+            //         loading:false,
+            //         error:action.payload
+            //     }
         default:
             return state;
 
@@ -113,6 +131,32 @@ export const forgotPasswordReducer = (state = {}, action) => {
                 loading:false,
                 error:action.payload
             }
+        
+        default:
+            return state;
+    }
+}
+
+export const postUserReducer = (state = {poster:{}}, action) => {
+    switch(action.type){
+        case USER_DETAILS_REQUEST:
+                return{
+                    ...state,
+                    loading:true,
+                    error:null
+                }
+            case USER_DETAILS_SUCCESS:
+                return{
+                    ...state,
+                    loading:false,
+                    poster:action.payload
+                }
+            case USER_DETAILS_FAIL:
+                return{
+                    ...state,
+                    loading:false,
+                    error:action.payload
+                }
         default:
             return state;
     }

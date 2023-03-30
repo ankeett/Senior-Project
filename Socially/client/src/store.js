@@ -1,12 +1,15 @@
 import {createStore, combineReducers, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk'
 import {composeWithDevTools} from "redux-devtools-extension";
-import {userReducer,forgotPasswordReducer} from './reducers/userReducer'
+import {userReducer,forgotPasswordReducer, postUserReducer} from './reducers/userReducer'
+import {postReducer} from './reducers/postReducer'
 
 
 const reducer = combineReducers({
      user:userReducer,
      forgotPw: forgotPasswordReducer,
+     posts: postReducer,
+     poster: postUserReducer,
     // review:reviewReducer,
     // productRed:productReducer,
     // cart:cartReducer,s
