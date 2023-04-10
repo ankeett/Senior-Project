@@ -1,18 +1,40 @@
 import React, { useEffect } from 'react'
-import {Box,Avatar,Typography,Divider,Button, Paper,Chip} from '@mui/material'
+import {Box,Avatar,Typography,Divider,Button, Paper,Chip,Link} from '@mui/material'
 import {useSelector,useDispatch} from 'react-redux'
-import {userDetails} from '../../actions/postAction'
+import {userDetails,likePost} from '../../actions/postAction'
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import { useNavigate } from 'react-router-dom';
 
-const Post = ({p,user}) => {
+
+const Post = ({p}) => {
     const dispatch = useDispatch()
-        
+    const {user:currentUser} = useSelector(state=>state.user)
+    const navigate = useNavigate()
+
+    
+    const handleLike = ()=>{
+        console.log('handleLike')
+        if(!currentUser){
+            return
+        }
+
+        dispatch(likePost(p._id))
+    }
+    
+    const handleComment = ()=>{
+      console.log('handleComment')
+      navigate(`/post/${p._id}`)
+    }
+    
   return (
     <div>
+      { p &&
         <Paper elevation={2} >
             <Box className='flex flex-row p-4'>
                 <Avatar/>
                 <Box className='flex flex-col ml-4'>
-                    <Typography variant='h6'>{p.user.name}</Typography>
+                    <Link variant='h6' href= {`/profile/user/${p.user._id}`} >{p.user.name}</Link>
                     <Typography variant='subtitle2'>@{p.user.username}</Typography>
                 </Box>
                 <Divider/>
@@ -37,12 +59,21 @@ const Post = ({p,user}) => {
               </div>
 
             <div className='flex flex-row justify-between'>
-                <Button className='text-2xl'>🤍</Button>
-                <Button className='text-2xl'>💬</Button>
+                <div className='flex flex-row'>
+                {currentUser && p.likes.includes(currentUser._id) ?
+                    <Button className='text-2xl' onClick={handleLike}><FavoriteIcon/></Button>
+                    :
+                    <Button className='text-2xl'onClick={handleLike}><FavoriteBorderIcon/></Button>
+                }
+                <p>{p.likes.length}</p>
+                </div>
+                
+                <Button className='text-2xl' onClick={handleComment}>💬</Button>
                 <Button className='text-2xl'>🔁</Button>
             </div>
             
         </Paper>
+    }
     </div>
   )
 }

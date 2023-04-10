@@ -10,7 +10,6 @@ const Feed = () => {
     useEffect(()=>{
         dispatch(getAllPosts())
     },[dispatch])
-    console.log(post)
 
 
    
@@ -18,7 +17,7 @@ const Feed = () => {
   return (
     <div className='mt-3 flex flex-col gap-3'>
         {
-            post?.map((p)=>(
+            post && post.sort((a,b)=>new Date(b.createdAt)- new Date(a.createdAt)).map((p)=>(
                 <Post key={p._id} p={p}/>
             ))
         }

@@ -26,6 +26,7 @@ import GifBoxIcon from '@mui/icons-material/GifBox';
 
 import {useDispatch,useSelector} from 'react-redux'
 import { loadUser } from '../../actions/userAction';
+import {createPost} from '../../actions/postAction'
 
 
 const Menus = [
@@ -43,14 +44,16 @@ const drawerWidth = 360
 const Nav =()=> {
 
     const {user,isAuthenticated} = useSelector(state=>state.user)
+    console.log(user)
 
-    console.log(user);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const pathname = useLocation().pathname
     const [status,setStatus] = useState('Everyone');
     const [images,setImages] = useState([]);
     const [tags,setTags] = useState([]);
     const [open,setOpen] = useState(0);
+    const [post,setPost] = useState("");
 
     useEffect(() => {
       navigate('/home');
@@ -92,6 +95,17 @@ const Nav =()=> {
           reader.readAsDataURL(file);
       });
   
+    }
+
+    const handleCreatePost = (e)=>{
+      if(user){
+
+        dispatch(createPost(post,tags));
+      }
+      else{
+        navigate('/login');
+      }
+
     }
     
   return (
@@ -176,7 +190,7 @@ const Nav =()=> {
             </div> 
             
             <div>
-              <Input disableUnderline={true} multiline placeholder="What's on your mind?" variant="standard" className='border-none w-full ml-6 h-full'
+              <Input disableUnderline={true} multiline placeholder="What's on your mind?" variant="standard" onChange={(e)=>{setPost(e.target.value)}} className='border-none w-full ml-6 h-full'
               />
             </div>
             <Divider className='m-2 mt-7'/>
@@ -220,7 +234,7 @@ const Nav =()=> {
                   <label htmlFor="myGif"><GifBoxIcon className='cursor-pointer text-[#1da1f2] float-left mt-3' style={{ fontSize: '20px'}}/></label>
                   <input id="myGif" type="file" fullWidth name='image' multiple accept="image/png image/jpeg image/webp image/gif" className='hidden' onChange = {handleImages}/>
                 </div>
-                <Button className='text-white bg-[#1da1f2] normal-case text-base rounded-full float-right'>Post</Button>
+                <Button className='text-white bg-[#1da1f2] normal-case text-base rounded-full float-right' onClick={handleCreatePost}>Post</Button>
             </div>
           </Paper>
         </div> : ''
