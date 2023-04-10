@@ -3,7 +3,7 @@ const User = require('../models/userModel');
 
 exports.createPost = async (req, res, next) => {
     try{
-
+        console.log('on create psot')
         const {content,tags} = req.body;
         console.log(req.user)
         const post = await Post.create({
@@ -32,7 +32,6 @@ exports.getPosts = async (req, res, next) => {
             return post;
         }))
 
-        console.log(posts)
         res.status(200).json({
             success: true,
             posts,
@@ -72,7 +71,12 @@ exports.getUserDetails = async (req, res, next) => {
 
 exports.getSinglePost = async (req, res, next) => {
     try{
+        console.log('on get single post')
         const post = await Post.findById(req.params.id);
+        console.log(post)
+        const user = await User.findById(post.user);
+        post.user = user;
+
         if(!post){
             return res.status(404).json({
                 success: false,
@@ -85,7 +89,10 @@ exports.getSinglePost = async (req, res, next) => {
         })
     }
     catch(error){
-        next(error);
+        res.status(404).json({
+            success: false,
+            message: "Post not found",
+        })
     }
 }
 
@@ -143,7 +150,18 @@ exports.deletePost = async (req, res, next) => {
 
 exports.getPostsByUser = async (req, res, next) => {
     try{
-        const posts = await Post.find({user: req.user.id});
+        console.log(req.params.id)
+        const postsWithoutUser = await Post.find({user: req.params.id});
+        console.log(postsWithoutUser)
+
+        const posts = await Promise.all(postsWithoutUser.map(async post => {
+                let user = await User.findById(post.user);
+                post = post.toJSON();
+                post.user = user;
+                return post;
+            }))
+
+
         res.status(200).json({
             success: true,
             posts,
@@ -175,6 +193,8 @@ exports.getLikes = async (req, res, next) => {
 
 exports.likePost = async (req, res, next) => {
     try{
+
+        console.log(req.user)
         const post = await Post.findById(req.params.id);
         if(!post){
             return res.status(404).json({
@@ -182,21 +202,33 @@ exports.likePost = async (req, res, next) => {
                 message: "Post not found",
             })
         }
-        if(post.likes.includes(req.user.id)){
-            return res.status(400).json({
-                success: false,
-                message: "You have already liked this post",
+        if(req.user){
+            if(post.likes.includes(req.user.id)){
+                return res.status(400).json({
+                    success: false,
+                    message: "You have already liked this post",
+                })
+            }
+            post.likes.push(req.user.id);
+            await post.save();
+            res.status(200).json({
+                success: true,
+                posts: [...posts, post]
             })
         }
-        post.likes.push(req.user.id);
-        await post.save();
-        res.status(200).json({
-            success: true,
-            likes: post.likes,
-        })
+        else{
+            return res.status(400).json({
+                success: false,
+                message: "You have not logged in",
+            })
+        }
+        
     }
     catch(error){
-        next(error);
+        res.status(400).json({
+            success: false,
+            message: "You have not logged in",
+        })
     }
 }
 

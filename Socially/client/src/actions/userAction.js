@@ -149,3 +149,20 @@ export const loadUser = () => async(dispatch)=>{
         dispatch({type:"LOAD_FAIL",payload:error.response.data.message});
     }
 }
+
+//logout
+export const logout = () => async (dispatch) => {
+    try{
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            withCredentials: true
+        }
+        const {data} = await axios.get(`${host}/api/user/logout`,config);
+        dispatch({type:LOGOUT_SUCCESS})
+    }
+    catch(error){
+        dispatch({type:LOGOUT_FAIL,payload:error.response.data.message});
+    }
+}

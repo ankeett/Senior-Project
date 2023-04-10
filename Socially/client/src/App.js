@@ -16,6 +16,8 @@ import CheckForget from './components/Authentication/CheckForget';
 import ResetPw from './components/Authentication/ResetPw';
 import ChangePassword from './components/Authentication/ChangePw';
 import LoadDetails from './components/Home/load';
+import UserProfile from './components/Profile/UserProfile';
+import PostPage from './components/Post/PostPage';
 
 function App() {
   return (
@@ -29,6 +31,7 @@ function App() {
           <Route exact path='/notifications' element={<Notifications/>}/>
           <Route exact path='/messages' element={<Messsages/>}/>
           <Route exact path='/profile' element={<Profile/>}/>
+          
           <Route exact path='/more' element={<More/>}/>
         </Route>
         <Route exact path='/login' element={<Auth/>}/>
@@ -39,6 +42,10 @@ function App() {
         <Route exact path='/checkforgot' element={<CheckForget/>}/>
         <Route exact path='/api/password/reset/:token' element={<ResetPw/>}/>
         <Route exact path='/changePassword' element={<ChangePassword/>}/>
+        <Route exact path='/profile/user/:id' element={<UserProfile/>}/>
+        <Route exact path='/post/:id' element={<PostPage/>}/>
+
+
 
       </Routes>
     </BrowserRouter>

@@ -2,12 +2,13 @@ const express = require("express");
 
 const router = express.Router();  
 
-const {registerUser,loginUser,sendActivationEmail,activateAccount,forgotPassword,resetPassword,changePassword, loadUser} = require("../controllers/userController.js");
+const {registerUser,loginUser,sendActivationEmail,activateAccount,forgotPassword,resetPassword,changePassword, loadUser,logout} = require("../controllers/userController.js");
 const {isAuthenticatedUser} = require("../middleware/auth.js");
 
 //user routes
 router.route("/register").post(registerUser);
 router.route("/login").post(loginUser);
+router.route('/user/logout').get(isAuthenticatedUser,logout);
 
 router.route("/account/sendactivate").post(sendActivationEmail);
 router.route("/account/activate/:token").put(activateAccount);

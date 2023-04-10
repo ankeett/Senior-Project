@@ -313,3 +313,25 @@ exports.loadUser = async (req,res,next) => {
         //throw new Error("User could not be loaded.");
     }
 }
+
+//logout
+exports.logout = async (req,res,next) => {
+    try{
+        res.cookie("token", "none", {
+            expires: new Date(Date.now()),
+            httpOnly: true,
+        });
+        res.status(200).json({
+            success:true,
+            message:"User logged out successfully."
+        });
+
+    }
+    catch(error){
+        res.status(500).json({
+            success:false,
+            message:"User could not be logged out."
+        });
+        //throw new Error("User could not be logged out.");
+    }
+}

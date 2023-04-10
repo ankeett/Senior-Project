@@ -66,24 +66,19 @@ export const userReducer = (state = {user:{}}, action) => {
                 isActivated:false,
                 error: action.payload
             }
-            // case USER_DETAILS_REQUEST:
-            //     return{
-            //         ...state,
-            //         loading:true,
-            //         error:null
-            //     }
-            // case USER_DETAILS_SUCCESS:
-            //     return{
-            //         ...state,
-            //         loading:false,
-            //         user:action.payload
-            //     }
-            // case USER_DETAILS_FAIL:
-            //     return{
-            //         ...state,
-            //         loading:false,
-            //         error:action.payload
-            //     }
+        case LOGOUT_SUCCESS:
+            return{
+                ...state,
+                loading:false,
+                isAuthenticated:false,
+                user:null,
+                success:true
+            }
+        case LOGOUT_FAIL:
+            return{
+                ...state,
+                error:action.payload
+            }
         default:
             return state;
 
