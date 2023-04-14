@@ -53,6 +53,7 @@ const Post = ({p}) => {
                       value={tag}
                       label={tag}
                       varient="outlined"
+                      onClick={()=>navigate(`/postsByTag/${tag}`)}
                     />
                   )
                 })}

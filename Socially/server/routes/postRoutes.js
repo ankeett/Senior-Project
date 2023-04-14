@@ -2,7 +2,7 @@ const express = require("express");
 
 const router = express.Router();  
 
-const {createPost,getPosts,getSinglePost,updatePost,deletePost,getPostsByUser,getLikes,likePost,unlikePost,getComments,createComment,deleteComment, getUserDetails} = require("../controllers/postController.js");
+const {createPost,getPosts,getSinglePost,updatePost,deletePost,getPostsByUser,getLikes,likePost,unlikePost,getComments,createComment,deleteComment, getUserDetails, getPopularTags,getPostsByTag, getFollowingsPosts} = require("../controllers/postController.js");
 const {isAuthenticatedUser} = require("../middleware/auth.js");
 
 //post routes
@@ -23,5 +23,10 @@ router.route("/post/unlike/:id").put(unlikePost);
 router.route("/post/comments/:id").get(getComments);
 router.route("/post/comment/:id").put(createComment);
 router.route("/post/comment/delete/:id").delete(deleteComment);
+
+router.route("/tags/popular").get(getPopularTags);
+router.route('/tag/:id').get(getPostsByTag);
+
+router.route("/posts/following").get(isAuthenticatedUser,getFollowingsPosts);
 
 module.exports  = router;

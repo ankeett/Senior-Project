@@ -18,8 +18,12 @@ import ChangePassword from './components/Authentication/ChangePw';
 import LoadDetails from './components/Home/load';
 import UserProfile from './components/Profile/UserProfile';
 import PostPage from './components/Post/PostPage';
+import { useSelector } from 'react-redux';
+import PostsByTags from './components/Explore/PostsByTags';
+
 
 function App() {
+  const {user} = useSelector(state => state.user)
   return (
    <div>
     <BrowserRouter>
@@ -30,7 +34,10 @@ function App() {
           <Route exact path='/explore' element={<Explore/>}/>
           <Route exact path='/notifications' element={<Notifications/>}/>
           <Route exact path='/messages' element={<Messsages/>}/>
-          <Route exact path='/profile' element={<Profile/>}/>
+          {
+            user &&
+            <Route exact path='/profile' element={<Profile/>}/>
+          }
           
           <Route exact path='/more' element={<More/>}/>
         </Route>
@@ -44,6 +51,7 @@ function App() {
         <Route exact path='/changePassword' element={<ChangePassword/>}/>
         <Route exact path='/profile/user/:id' element={<UserProfile/>}/>
         <Route exact path='/post/:id' element={<PostPage/>}/>
+        <Route exact path='/postsByTag/:id' element={<PostsByTags/>}/>
 
 
 

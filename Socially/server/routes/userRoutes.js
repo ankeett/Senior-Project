@@ -2,7 +2,7 @@ const express = require("express");
 
 const router = express.Router();  
 
-const {registerUser,loginUser,sendActivationEmail,activateAccount,forgotPassword,resetPassword,changePassword, loadUser,logout} = require("../controllers/userController.js");
+const {registerUser,loginUser,sendActivationEmail,activateAccount,forgotPassword,resetPassword,changePassword, loadUser,logout,followUser,unfollowUser} = require("../controllers/userController.js");
 const {isAuthenticatedUser} = require("../middleware/auth.js");
 
 //user routes
@@ -17,6 +17,9 @@ router.route("/account/forgotpassword").post(forgotPassword);
 router.route("/account/resetpassword/:token").put(resetPassword);
 router.route('/account/changePassword').put(changePassword);
 router.route('/me').get(isAuthenticatedUser,loadUser)
+
+router.route('/follow/:id').put(isAuthenticatedUser, followUser);
+router.route('/unfollow/:id').put(isAuthenticatedUser, unfollowUser);
 
 
 module.exports  = router;
