@@ -3,9 +3,7 @@ const User = require('../models/userModel');
 
 exports.createPost = async (req, res, next) => {
     try{
-        console.log('on create psot')
         const {content,tags} = req.body;
-        console.log(req.user)
         const post = await Post.create({
             content,tags,user: req.user.id,
         });
@@ -71,9 +69,7 @@ exports.getUserDetails = async (req, res, next) => {
 
 exports.getSinglePost = async (req, res, next) => {
     try{
-        console.log('on get single post')
         const post = await Post.findById(req.params.id);
-        console.log(post)
         const user = await User.findById(post.user);
         post.user = user;
 
@@ -193,8 +189,6 @@ exports.getLikes = async (req, res, next) => {
 
 exports.likePost = async (req, res, next) => {
     try{
-
-        console.log(req.user)
         const post = await Post.findById(req.params.id);
         if(!post){
             return res.status(404).json({
@@ -339,3 +333,80 @@ exports.deleteComment = async (req, res, next) => {
     }
 }
 
+//get popular tags in last week
+exports.getPopularTags = async (req, res, next) => {
+    try {
+      const posts = await Post.find({
+        createdAt: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+      });
+  
+      const tagCounts = posts.reduce((acc, post) => {
+        post.tags.forEach((tag) => {
+          const existingTag = acc.find((t) => t.tag === tag);
+          if (existingTag) {
+            existingTag.count++;
+          } else {
+            acc.push({ tag, count: 1 });
+          }
+        });
+        return acc;
+      }, []);
+  
+      res.status(200).json({
+        success: true,
+        tags: tagCounts,
+      });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        message: "Something went wrong",
+      });
+    }
+  };
+
+exports.getPostsByTag = async (req, res, next) => {
+    try{
+        const postsWithoutUser = await Post.find({tags: req.params.id});
+        const posts = await Promise.all(postsWithoutUser.map(async post => {
+            let user = await User.findById(post.user);
+            post = post.toJSON();
+            post.user = user;
+            return post;
+        }))
+        res.status(200).json({
+            success: true,
+            posts,
+        })
+    }
+    catch(error){
+        res.status(400).json({
+            success: false,
+            message: "Something went wrong",
+        })
+    }
+}
+
+exports.getFollowingsPosts = async (req, res, next) => {
+    try{
+        const user = await User.findById(req.user.id);
+        const postsWithoutUser = await Post.find({user: {$in: user.following}});
+        const posts = await Promise.all(postsWithoutUser.map(async post => {
+            let user = await User.findById(post.user);
+            post = post.toJSON();
+            post.user = user;
+            return post;
+        }
+        ))
+        res.status(200).json({
+            success: true,
+            posts,
+        })
+        
+    }
+    catch(error){
+        res.status(400).json({
+            success: false,
+            message: "Something went wrong",
+        })
+    }
+}

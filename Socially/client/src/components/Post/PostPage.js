@@ -22,8 +22,8 @@ const PostPage = () => {
   return (
     <div>post
         {
-            post &&
-                <Post p={post}/>
+            // post &&
+            //     <Post p={post}/>
         }
       
 

@@ -166,3 +166,35 @@ export const logout = () => async (dispatch) => {
         dispatch({type:LOGOUT_FAIL,payload:error.response.data.message});
     }
 }
+
+export const followUser = (id) => async(dispatch)=>{
+    try{
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            withCredentials: true
+        }
+        const {data} = await axios.put(`${host}/api/follow/${id}`,{},config);
+        dispatch({type:LOAD_SUCCESS,payload:data.user});
+    }
+    catch(error){
+        dispatch({type:LOAD_FAIL,payload:error.response.data.message});
+    }
+}
+
+export const unfollowUser = (id) => async(dispatch)=>{
+    try{
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            withCredentials: true
+        }
+        const {data} = await axios.put(`${host}/api/unfollow/${id}`,{},config);
+        dispatch({type:LOAD_SUCCESS,payload:data.user});
+    }
+    catch(error){
+        dispatch({type:LOAD_FAIL,payload:error.response.data.message});
+    }
+}

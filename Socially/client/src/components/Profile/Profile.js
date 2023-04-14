@@ -3,6 +3,7 @@ import { useDispatch,useSelector } from 'react-redux'
 import { getUserPosts } from '../../actions/postAction'
 import Post from '../Post/Post'
 import { useNavigate } from 'react-router-dom'
+import { loadUser } from '../../actions/userAction'
 
 
 const Profile = () => {
@@ -17,14 +18,13 @@ const Profile = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    //load user post
-
-      dispatch(getUserPosts(user._id))
-    
-
+    dispatch(getUserPosts(user._id))
   }, [dispatch])
 
-  console.log(post)
+  
+
+
+
   return (
     <div>
       <a href='/home'>⬅︎ Back to home</a>

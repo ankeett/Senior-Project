@@ -335,3 +335,83 @@ exports.logout = async (req,res,next) => {
         //throw new Error("User could not be logged out.");
     }
 }
+
+//follow a user
+exports.followUser = async (req,res,next) => {
+    try{
+        console.log(req.user.id);
+        const user = await User.findById(req.user.id);
+        if(!user){
+            res.status(404).json({success:false,message:"User not found"});
+            return;
+            //throw new Error("User not found");
+        }
+        const userToFollow = await User.findById(req.params.id);
+        if(!userToFollow){
+            res.status(404).json({success:false,message:"User to follow not found"});
+            return;
+            //throw new Error("User to follow not found");
+        }
+        if(userToFollow.followers.includes(req.user.id)){
+            res.status(400).json({success:false,message:"User already followed"});
+            return;
+            //throw new Error("User already followed");
+        }
+        userToFollow.followers.push(req.user.id);
+        await userToFollow.save();
+        user.following.push(req.params.id);
+        await user.save();
+
+        res.status(200).json({
+            success:true,
+            user
+        });
+
+    }
+    catch(error){
+        res.status(500).json({
+            success:false,
+            message:"User could not be followed."
+        });
+        //throw new Error("User could not be followed.");
+    }
+}
+
+exports.unfollowUser = async (req,res,next) => {
+    try{
+        const user = await User.findById(req.user.id);
+        if(!user){
+            res.status(404).json({success:false,message:"User not found"});
+            return;
+            //throw new Error("User not found");
+        }
+        const userToUnfollow = await User.findById(req.params.id);
+        if(!userToUnfollow){
+            res.status(404).json({success:false,message:"User to unfollow not found"});
+            return;
+            //throw new Error("User to unfollow not found");
+        }
+        if(!userToUnfollow.followers.includes(req.user.id)){
+            res.status(400).json({success:false,message:"User not followed"});
+            return;
+            //throw new Error("User not followed");
+        }
+        userToUnfollow.followers = userToUnfollow.followers.filter(follower => follower != req.user.id);
+        await userToUnfollow.save();
+        user.following = user.following.filter(following => following != req.params.id);
+        await user.save();
+
+        res.status(200).json({
+            success:true,
+            user
+        });
+
+    }
+    catch(error){
+        res.status(500).json({
+            success:false,
+            message:"User could not be unfollowed."
+        });
+        //throw new Error("User could not be unfollowed.");
+    }
+}

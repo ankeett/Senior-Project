@@ -29,14 +29,7 @@ import { loadUser } from '../../actions/userAction';
 import {createPost} from '../../actions/postAction'
 
 
-const Menus = [
-    {title: "Home", src: <HomeOutlinedIcon/>,clicked:<HomeIcon/>, link: '/home' },
-    {title: "Explore",src: <ExploreOutlinedIcon/>,clicked:<ExploreIcon/>,link: '/explore'},
-    { title: "Notifications", src: <NotificationsNoneOutlinedIcon/>,clicked:<NotificationsIcon/> ,link: '/notifications'},
-    { title: "Messages", src: <MessageOutlinedIcon/>,clicked:<MessageIcon/> ,link: '/messages'},
-    { title: "Profile", src: <PersonOutlineOutlinedIcon/>,clicked:<PersonIcon/> ,link: '/profile'},
-    { title: "More", src: <ExpandCircleDownOutlinedIcon/>,clicked:<ExpandCircleDownIcon/> ,link: '/more'},
-  ]; 
+
 
 const drawerWidth = 360
 
@@ -44,7 +37,16 @@ const drawerWidth = 360
 const Nav =()=> {
 
     const {user,isAuthenticated} = useSelector(state=>state.user)
-    console.log(user)
+    console.log(isAuthenticated)
+
+    const Menus = [
+      {title: "Home", src: <HomeOutlinedIcon/>,clicked:<HomeIcon/>, link: '/home',isAuth: false },
+      {title: "Explore",src: <ExploreOutlinedIcon/>,clicked:<ExploreIcon/>,link: '/explore',isAuth: false},
+      { title: "Notifications", src: <NotificationsNoneOutlinedIcon/>,clicked:<NotificationsIcon/> ,link: '/notifications', isAuth: false},
+      { title: "Messages", src: <MessageOutlinedIcon/>,clicked:<MessageIcon/> ,link: '/messages',isAuth: false},
+      { title: "Profile", src: <PersonOutlineOutlinedIcon/>,clicked:<PersonIcon/> ,link: '/profile',isAuth: !user},
+      { title: "More", src: <ExpandCircleDownOutlinedIcon/>,clicked:<ExpandCircleDownIcon/> ,link: '/more',isAuth: false},
+    ]; 
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -131,12 +133,13 @@ const Nav =()=> {
         anchor="left"
         >
         <Toolbar className='flex flex-col m-2'>
-            <img  src={require("../../images/message.png")} className=" w-10 h-10 object-center"/>
-            <p>Socially</p>
+            <img  src={require("../../images/lighthouse.png")} className=" w-10 h-10 object-center"/>
+            <p>Beacon</p>
         </Toolbar>
         {/* <Divider /> */}
         <List className='m-5 p-8'>
           {Menus.map((m,index) => (
+            !m.isAuth ?
             <li key={index}>
                 <Link to={m.link} className="flex flex-row gap-5 m-7 no-underline text-black">
                     <div>
@@ -147,6 +150,7 @@ const Nav =()=> {
                     </span>
                 </Link>
             </li>
+            :''
           ))}
 
           <Button className='text-white bg-[#1da1f2] normal-case h-12 rounded-full text-base w-3/4'  onClick={handlePost}>Post</Button>
