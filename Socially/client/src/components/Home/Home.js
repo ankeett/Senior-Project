@@ -43,17 +43,16 @@ const Home = () => {
     <div className='grid grid-flow-col-dense grid-cols-3 grid-rows-3'>
         <Box
             component="main"
-            sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
-            className ='col-span-2'
+            className ="col-span-2"
         >
             <div className='mb-4'>
                 <strong className='font-semibold'>Home</strong>
             </div>
             <div className='flex flex-row normal-case h-14 ' fullWidth>
-                <Button className={`text-gray-800  font-bold normal-case ${open === 0 ? "underline underline-offset-[16px] decoration-4 text-[#1da1f2]" : ""}`} fullWidth onClick={()=>{setOpen(0)}}>
+                <Button className={`font-bold normal-case ${open === 0 ? "underline underline-offset-[16px] decoration-4 text-[#1da1f2]" : "text-gray-700 "}`} fullWidth onClick={()=>{setOpen(0)}}>
                     For You
                 </Button>
-                <Button className={`text-gray-800 font-bold normal-case ${open === 1 ? "underline underline-offset-[16px] decoration-4 text-[#1da1f2]" : ""}`} fullWidth onClick={()=>{setOpen(1)}}>
+                <Button className={`font-bold normal-case ${open === 1 ? "underline underline-offset-[16px] decoration-4 text-[#1da1f2]" : "text-gray-700"}`} fullWidth onClick={()=>{setOpen(1)}}>
                     Following
                 </Button>
 
@@ -85,7 +84,7 @@ const Home = () => {
                                 <IconButton
                                 
                                 >
-                                    <SearchIcon/>
+                                    <SearchIcon onClick={()=>{console.log("search")}}/>
                                 </IconButton>
                             </InputAdornment>
                         )
@@ -96,10 +95,10 @@ const Home = () => {
                         <h4>Latest News</h4>
 
                         <div className='flex flex-row normal-case'>
-                            <Button className={`text-gray-800  font-bold normal-case ${news === 0 ? "underline underline-offset-[16px] decoration-4 text-[#1da1f2]" : ""}`} fullWidth onClick={()=>{setNews(0)}}>
+                            <Button className={`font-bold normal-case ${news === 0 ? "underline underline-offset-[16px] decoration-4 text-[#1da1f2]" : "text-gray-800  "}`} fullWidth onClick={()=>{setNews(0)}}>
                                 Business
                             </Button>
-                            <Button className={`text-gray-800  font-bold normal-case ${news === 1 ? "underline underline-offset-[16px] decoration-4 text-[#1da1f2]" : ""}`} fullWidth onClick={()=>{setNews(1)}}>
+                            <Button className={` font-bold normal-case ${news === 1 ? "underline underline-offset-[16px] decoration-4 text-[#1da1f2]" : "text-gray-800 "}`} fullWidth onClick={()=>{setNews(1)}}>
                                 Sports
                             </Button>
                         </div>

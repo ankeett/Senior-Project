@@ -3,13 +3,34 @@ const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const sendEmail = require("../utils/sendEmail");
+const cloudinary = require("cloudinary").v2;
 
 
 exports.registerUser = async (req, res, next) => {
     try{
+        //cloudinary
+        if(!req.body.avatar){
+            return res.status(400).json({success:false,message:"Please upload an image"});
+        }
+
+        const result = await cloudinary.uploader.upload(req.body.avatar,{
+            folder:"BeaconAvatars",
+            width:150,
+            crop:"scale"
+        });
+
+        console.log(result)
+
+        req.body.avatar = {
+            public_id:result.public_id,
+            url:result.secure_url
+        }
+
+        
+
         const {name,username,email,password} = req.body;
 
-        if(!name || !email || !password){
+        if(!name || !email || !password || !username){
             return res.status(400).json({success:false,message:"Please enter all fields"});
 
         }
@@ -25,7 +46,7 @@ exports.registerUser = async (req, res, next) => {
         }
 
         const user = await User.create({
-            name,username,email,password,
+            name,username,email,password, avatar: req.body.avatar
         });
 
         sendToken(user, 201, res);

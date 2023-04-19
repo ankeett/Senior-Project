@@ -25,16 +25,18 @@ const PostPage = () => {
             // post &&
             //     <Post p={post}/>
         }
+
+        {/* <Post p={post}/> */}
       
 
 
 
-        {/* {   post.comments && post.comments.map((c)=>(
+        {   post.comments && post.comments.map((c)=>(
                 <div key={c._id}>
                     <p>{c.text}</p>
                 </div>
         ))
-        }  */}
+        } 
 
     </div>
   )

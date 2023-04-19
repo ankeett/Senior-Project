@@ -16,7 +16,7 @@ import axios from 'axios';
 
 const host = "http://localhost:4000";
 
-export const register = (name,username,email,password) => async(dispatch)=>{
+export const register = (name,username,email,password,avatar) => async(dispatch)=>{
     try{
         dispatch({type:"REGISTER_REQUEST"});
         const config = {
@@ -25,7 +25,7 @@ export const register = (name,username,email,password) => async(dispatch)=>{
         }
 
         const {data} = await axios.post(`${host}/api/register`,
-            {name,username,email,password}
+            {name,username,email,password,avatar}
             ,config
         );
         
@@ -198,3 +198,8 @@ export const unfollowUser = (id) => async(dispatch)=>{
         dispatch({type:LOAD_FAIL,payload:error.response.data.message});
     }
 }
+
+export const clearErrors = () => async(dispatch)=>{
+   dispatch({type:CLEAR_ERRORS});
+}
+

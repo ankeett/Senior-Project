@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import {Box,Drawer,CssBaseline,AppBar,Toolbar,List,Divider, Avatar, MenuItem, Input,Select, IconButton,Chip} from '@mui/material';
+import {Box,Drawer,CssBaseline,AppBar,Toolbar,List,Divider, Avatar, MenuItem, Input,Select, IconButton,Chip,useMediaQuery} from '@mui/material';
 
 import HomeIcon from '@mui/icons-material/Home';
 import ExploreIcon from '@mui/icons-material/Explore';
@@ -31,10 +31,14 @@ import {createPost} from '../../actions/postAction'
 
 
 
-const drawerWidth = 360
+
 
 
 const Nav =()=> {
+    let drawerWidth = 360
+    const isLargeScreen = useMediaQuery('(min-width:860px)');
+
+    isLargeScreen ? drawerWidth = 300 : drawerWidth = 130
 
     const {user,isAuthenticated} = useSelector(state=>state.user)
     console.log(isAuthenticated)
@@ -102,7 +106,7 @@ const Nav =()=> {
     const handleCreatePost = (e)=>{
       if(user){
 
-        dispatch(createPost(post,tags));
+        dispatch(createPost(post,tags,images));
       }
       else{
         navigate('/login');
@@ -114,12 +118,7 @@ const Nav =()=> {
     <div className='flex'>
 
     <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar
-        position="fixed"
-        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
-        >
-      </AppBar>
+      
       <Drawer
         sx={{
           width: drawerWidth,
@@ -137,7 +136,7 @@ const Nav =()=> {
             <p>Beacon</p>
         </Toolbar>
         {/* <Divider /> */}
-        <List className='m-5 p-8'>
+        <List className='m-5 pt-8 pl-4'>
           {Menus.map((m,index) => (
             !m.isAuth ?
             <li key={index}>
@@ -145,9 +144,11 @@ const Nav =()=> {
                     <div>
                         {m.link === pathname ? m.clicked :m.src} 
                     </div>
-                    <span className={m.link === pathname ? `font-bold`:''}>
+                    { isLargeScreen &&
+                      <span className={m.link === pathname ? `font-bold`:''}>
                         {m.title}
-                    </span>
+                      </span>
+                    }
                 </Link>
             </li>
             :''
@@ -162,7 +163,12 @@ const Nav =()=> {
              { user?.name ? 
                 <div className='flex flex-row justify-center items-center gap-4'>
                   <Avatar>
-                    {user?.name[0]}
+                    {
+                      user?.avatar ?
+                      <img src={user?.avatar.url} className='w-full h-full object-cover rounded-full'/>
+                      :
+                      <img className='w-full h-full object-cover rounded-full'/>
+                    }
                   </Avatar>
                   <p className=' mr-4 text-sm'>{user?.name}</p>
                 </div>

@@ -32,7 +32,9 @@ const Post = ({p}) => {
       { p &&
         <Paper elevation={2} >
             <Box className='flex flex-row p-4'>
-                <Avatar/>
+                <Avatar>
+                  <img src={p.user.avatar.url} alt='profile pic' className='w-full h-full rounded-full'/>
+                </Avatar>
                 <Box className='flex flex-col ml-4'>
                     <Link variant='h6' href= {`/profile/user/${p.user._id}`} >{p.user.name}</Link>
                     <Typography variant='subtitle2'>@{p.user.username}</Typography>
@@ -41,6 +43,20 @@ const Post = ({p}) => {
             </Box>
             <div className='flex flex-col m-3'>
                 <p>{p.content}</p>
+                {
+                    p.image && (p.image.length > 0 &&
+                    <div className='flex flex-row gap-2'>
+                        {p.image.map((img,index)=>{
+
+                            return(
+                                <img key={index} src={img.url} alt='postImage' className={`mx-auto object-cover ${p.image.length > 1 ? "w-40 h-40": "w-full h-full"}`}/>
+                            )
+                        }
+                        )}
+                    </div>
+                    )
+
+                }
             </div>
             
             <Divider className='w-3/4 ml-16'/>
