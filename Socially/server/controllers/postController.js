@@ -1,11 +1,32 @@
 const Post = require('../models/postModel');
 const User = require('../models/userModel');
+const cloudinary = require('cloudinary').v2;
 
 exports.createPost = async (req, res, next) => {
     try{
+        //cloudinary
+        let images = [];
+        if(typeof req.body.image === 'string'){
+            images.push(req.body.image);
+        }
+        else{
+            images = req.body.image;
+        }
+        const imagesLinks = [];
+        for(let i = 0; i < images.length; i++){
+            const result = await cloudinary.uploader.upload(images[i], {
+                folder: "BeaconPosts"
+            });
+            imagesLinks.push({
+                public_id: result.public_id,
+                url: result.secure_url
+            })
+        }
+
+
         const {content,tags} = req.body;
         const post = await Post.create({
-            content,tags,user: req.user.id,
+            content,tags,user: req.user.id,image: imagesLinks
         });
         res.status(201).json({
             success: true,
@@ -146,25 +167,37 @@ exports.deletePost = async (req, res, next) => {
 
 exports.getPostsByUser = async (req, res, next) => {
     try{
-        console.log(req.params.id)
         const postsWithoutUser = await Post.find({user: req.params.id});
-        console.log(postsWithoutUser)
 
         const posts = await Promise.all(postsWithoutUser.map(async post => {
-                let user = await User.findById(post.user);
+                let user = await User.findById(post.user).lean();
                 post = post.toJSON();
                 post.user = user;
                 return post;
             }))
 
-
+        // return user details in the same format as the post if post is empty
+        if(posts.length === 0){
+            const user = await User.findById(req.params.id).lean();
+            posts[0]= {}
+            posts[0].user = user;
+            console.log(posts)
+            return res.status(200).json({
+                success: true,
+                posts,
+            })
+        }
+        
         res.status(200).json({
             success: true,
             posts,
         })
     }
     catch(error){
-        next(error);
+        res.status(404).json({
+            success: false,
+            message: "Posts not found",
+        })
     }
 }
 
@@ -189,7 +222,10 @@ exports.getLikes = async (req, res, next) => {
 
 exports.likePost = async (req, res, next) => {
     try{
+        const posts = await Post.find();
         const post = await Post.findById(req.params.id);
+        posts = posts.filter(post => post._id !== req.params.id)
+        
         if(!post){
             return res.status(404).json({
                 success: false,
@@ -205,9 +241,10 @@ exports.likePost = async (req, res, next) => {
             }
             post.likes.push(req.user.id);
             await post.save();
+            posts.push(post);
             res.status(200).json({
                 success: true,
-                posts: [...posts, post]
+                posts
             })
         }
         else{

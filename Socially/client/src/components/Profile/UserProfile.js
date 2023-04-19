@@ -18,9 +18,8 @@ const Profile = () => {
   const id = useParams().id;
   const {post} = useSelector(state => state.posts)
   const {user} = useSelector(state => state.user)
-  console.log(user)
 
-
+  console.log(post)
 
   const dispatch = useDispatch()
 
@@ -35,11 +34,21 @@ const Profile = () => {
       <a href='/home'>⬅︎ Back to home</a>
       <div className='flex flex-row gap-3 ml-16'>
         <div className='flex flex-col'>
-          <img  alt='profile pic' className='w-40 h-40 rounded-full'/>
+          {
+            post[0]?.user.avatar ? (
+              <img  src={post[0].user.avatar.url} alt='profile pic' className='w-40 h-40 rounded-full'/>
+            )
+            :
+            (
+              <img  alt='profile pic' className='w-40 h-40 rounded-full'/>
+            )
+
+          }
           <div>
             {
             post[0] &&
             <>
+            {/* what if there are no posts available */}
               <h1 className='text-2xl'>{post[0].user.name}</h1>
               <p>@{post[0].user.username}</p>
               { user && user._id !== post[0].user._id && 
@@ -61,8 +70,10 @@ const Profile = () => {
     <div className='flex flex-col'>
           <div className='mx-auto w-1/2 flex flex-col gap-3'>
             <h1 className='text-2xl'>Posts</h1>
+            
             {
               post && post.sort((a,b)=>new Date(b.createdAt)- new Date(a.createdAt)).map((p)=>(
+                p._id &&
                 <Post key={p._id} p={p}/>
               ))
             }

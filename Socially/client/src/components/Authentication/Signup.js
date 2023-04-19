@@ -1,11 +1,13 @@
 import React,{useEffect, useState} from 'react'
-import { Paper,Divider, TextField, Button, Grid,InputAdornment,IconButton,Container } from '@mui/material'
+import { Paper,Divider, TextField, Button, Grid,InputAdornment,IconButton,Container,Input, Avatar } from '@mui/material'
 import { Link } from 'react-router-dom'
 import  VisibilityIcon  from '@mui/icons-material/Visibility';
 import  VisibilityOffIcon  from '@mui/icons-material/VisibilityOff';
-import {login,register} from '../../actions/userAction'
+import {login,register,clearErrors} from '../../actions/userAction'
 import {useDispatch,useSelector} from 'react-redux'
 import {useNavigate} from 'react-router-dom'
+import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
+import Error from '../error/Error';
 
 
 
@@ -20,6 +22,9 @@ const Signup = () => {
     const [pw, setPw] = useState("");
     const [cpw,setCpw] = useState("")
     const [showPassword, setShowPassword] = useState(false);
+    const [avatar,setAvatar] = useState([])
+    const [hasError, setHasError] = useState("");
+    const [open, setOpen] = useState(true);
 
     const handleClickShowPassword = () => setShowPassword(!showPassword);
     const handleMouseDownPassword =() => setShowPassword(!showPassword);
@@ -30,16 +35,45 @@ const Signup = () => {
         e.preventDefault();
         formRef.current.reportValidity()
         if(pw !== cpw){
-            alert("Password does not match")
+            setHasError('Password does not match')
+            setOpen(true)
         }else{
- 
-            dispatch(register(name,username,email,pw))
-            navigate('/activate')
+            
+            dispatch(register(name,username,email,pw, avatar[0]))
+
+            if(!hasError){
+                navigate('/activate')
+            }
         }
         
         console.log(name,username,email,pw,cpw)
     }
 
+    const handleImages = (e)=>{
+        const files = Array.from(e.target.files);
+        setAvatar([]);
+        console.log(files);
+        files.forEach((file)=>{
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                if (reader.readyState=== 2){
+                    setAvatar((old)=>[...old, reader.result]);
+                }
+            }
+
+            reader.readAsDataURL(file);
+        });
+
+    }
+    
+    useEffect(() => {
+        if (error) {
+            setHasError(error)
+            setOpen(true)
+            dispatch(clearErrors())
+        }
+    }, [error,dispatch])
 
   return (
     <div>
@@ -53,6 +87,13 @@ const Signup = () => {
                         <Divider className='m-7'/>
                     <form action="" ref={formRef} onSubmit={handleSubmit}>
                         <div className='flex flex-col gap-7'>
+                            <div className='flex flex-col gap-0'>
+                                <Avatar className='w-40 h-40 mx-auto'>
+                                    <img src={avatar} className='w-40 h-40'/>
+                                </Avatar>
+                                <label htmlFor="myInput"><AddAPhotoIcon className='cursor-pointer text-[#1da1f2] float-right' style={{ fontSize: '30px'}}/></label>
+                                <input id="myInput" type="file" fullWidth name='image' accept="image/png image/jpeg image/webp" className='hidden' onChange = {handleImages}/>
+                            </div>
                         <TextField required={true} label="Name"  onChange={(e)=>{setName(e.target.value)}}/>
                         <TextField required={true} label="username"  onChange={(e)=>{setUsername(e.target.value)}}/>
                         <TextField required={true} label="Email"  onChange={(e)=>{setEmail(e.target.value)}}/>
@@ -88,6 +129,10 @@ const Signup = () => {
             </Grid>
 
           </Grid>
+          {
+             hasError && 
+             <Error hasError={hasError} setOpen={setOpen} open={open}/>
+          }
         </div>
   )
 }

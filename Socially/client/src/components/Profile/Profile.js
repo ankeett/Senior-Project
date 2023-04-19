@@ -30,7 +30,15 @@ const Profile = () => {
       <a href='/home'>⬅︎ Back to home</a>
       <div className='flex flex-row gap-3'>
         <div className='flex flex-col'>
-          <img  alt='profile pic' className='w-40 h-40 rounded-full'/>
+          {
+            user?.avatar ? (
+              <img src={user.avatar.url}  alt='profile pic' className='w-40 h-40 rounded-full'/>
+            )
+            :
+            (
+              <img  alt='profile pic' className='w-40 h-40 rounded-full'/>
+            )
+          }
           <div>
             <h1 className='text-2xl'>{user.name}</h1>
             <p>@{user.username}</p>
@@ -43,8 +51,17 @@ const Profile = () => {
           <div className='w-3/5 mt-3 flex flex-col gap-3'>
             {
               post?.map((p)=>(
+                p._id &&
                 <Post key={p._id} p={p}/>
               ))
+            }
+
+            {
+              post?.length === 1 && !post[0]._id && (
+                <div className='flex flex-col items-center'>
+                  <h1 className='text-2xl'>No posts yet</h1>
+                </div>
+              )
             }
           </div>
         </div>

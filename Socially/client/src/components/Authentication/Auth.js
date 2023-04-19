@@ -1,11 +1,14 @@
 import React,{useEffect, useState} from 'react'
-import { Paper,Divider, TextField, Button, Grid,InputAdornment,IconButton,Container } from '@mui/material'
+import { Paper,Divider, TextField, Button, Grid,InputAdornment,IconButton,Container, Collapse } from '@mui/material'
 import { Link } from 'react-router-dom'
 import  VisibilityIcon  from '@mui/icons-material/Visibility';
 import  VisibilityOffIcon  from '@mui/icons-material/VisibilityOff';
 import {useDispatch,useSelector} from 'react-redux'
-import {login} from '../../actions/userAction'
+import {login,clearErrors} from '../../actions/userAction'
 import {useNavigate} from 'react-router-dom'
+import Alert from '@mui/material/Alert';
+import CloseIcon from '@mui/icons-material/Close';
+import Error from '../error/Error';
 
 const Auth = () => {
     const formRef = React.useRef();
@@ -15,7 +18,8 @@ const Auth = () => {
     const [email, setEmail] = useState("");
     const [pw, setPw] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-
+    const [hasError, setHasError] = useState("");
+    const [open, setOpen] = useState(true);
     const handleClickShowPassword = () => setShowPassword(!showPassword);
     const handleMouseDownPassword =() => setShowPassword(!showPassword);
 
@@ -29,7 +33,6 @@ const Auth = () => {
     console.log(user)
 
     useEffect(() => {
-        console.log("12341234")
         if (isAuthenticated && user?.isActivated) {
             navigate('/')
         }
@@ -37,6 +40,16 @@ const Auth = () => {
             navigate('/activate')
         }
     }, [isAuthenticated,user,dispatch,error])
+
+    useEffect(() => {
+        if (error) {
+            setHasError(error)
+            setOpen(true)
+            dispatch(clearErrors())
+        }
+    }, [error])
+    
+    
 
   return (
     <div>
@@ -81,6 +94,10 @@ const Auth = () => {
                 </Paper>
             </Grid>
           </Grid>
+          {
+            hasError && 
+            <Error hasError={hasError} setOpen={setOpen} open={open}/>
+          }
         </div>
   )
 }

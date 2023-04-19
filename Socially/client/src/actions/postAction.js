@@ -13,7 +13,7 @@ import axios from 'axios';
 const host = "http://localhost:4000";
 
 
-export const createPost = (content,tags) => async (dispatch) => {
+export const createPost = (content,tags,image) => async (dispatch) => {
     try {
         dispatch({ type: CREATE_POST_REQUEST });
         const config = {
@@ -22,7 +22,7 @@ export const createPost = (content,tags) => async (dispatch) => {
             },
             withCredentials: true
         }
-        const { data } = await axios.post(`${host}/api/post/create`, {content,tags}, config);
+        const { data } = await axios.post(`${host}/api/post/create`, {content,tags,image}, config);
         console.log(data)
         dispatch({ type: CREATE_POST_SUCCESS, payload: data });
     } catch (error) {
