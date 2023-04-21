@@ -20,23 +20,25 @@ const PostPage = () => {
     console.log(post)
 
   return (
-    <div>post
+    <div>
         {
-            // post &&
-            //     <Post p={post}/>
+            post && post._id && 
+            (
+
+                <Post p={post}/>
+
+                
+            )
         }
-
-        {/* <Post p={post}/> */}
-      
-
-
-
-        {   post.comments && post.comments.map((c)=>(
+        <h3>Comments</h3>
+        {
+            post && post._id && post.comments && post.comments.length > 0 && post.comments.map(c=>(
                 <div key={c._id}>
-                    <p>{c.text}</p>
+                    <h3>{c.text}</h3>
                 </div>
-        ))
-        } 
+            ))
+
+        }
 
     </div>
   )

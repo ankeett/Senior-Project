@@ -24,9 +24,9 @@ exports.createPost = async (req, res, next) => {
         }
 
 
-        const {content,tags} = req.body;
+        const {content,tags,visibility} = req.body;
         const post = await Post.create({
-            content,tags,user: req.user.id,image: imagesLinks
+            content,tags,user: req.user.id,image: imagesLinks,visibility
         });
         res.status(201).json({
             success: true,
@@ -41,15 +41,15 @@ exports.createPost = async (req, res, next) => {
 
 exports.getPosts = async (req, res, next) => {
     try{
-        const postsWithoutUser = await Post.find();
+        const posts = await Post.find().populate('user');
 
         //find the respective user for each post
-        const posts = await Promise.all(postsWithoutUser.map(async post => {
-            let user = await User.findById(post.user);
-            post = post.toJSON();
-            post.user = user;
-            return post;
-        }))
+        // const posts = await Promise.all(postsWithoutUser.map(async post => {
+        //     let user = await User.findById(post.user);
+        //     post = post.toJSON();
+        //     post.user = user;
+        //     return post;
+        // }))
 
         res.status(200).json({
             success: true,
@@ -90,10 +90,8 @@ exports.getUserDetails = async (req, res, next) => {
 
 exports.getSinglePost = async (req, res, next) => {
     try{
-        const post = await Post.findById(req.params.id);
-        const user = await User.findById(post.user);
-        post.user = user;
-
+        const post = await Post.findById(req.params.id).populate('user');
+    
         if(!post){
             return res.status(404).json({
                 success: false,
@@ -167,14 +165,14 @@ exports.deletePost = async (req, res, next) => {
 
 exports.getPostsByUser = async (req, res, next) => {
     try{
-        const postsWithoutUser = await Post.find({user: req.params.id});
+        const posts = await Post.find({user: req.params.id}).populate('user');
 
-        const posts = await Promise.all(postsWithoutUser.map(async post => {
-                let user = await User.findById(post.user).lean();
-                post = post.toJSON();
-                post.user = user;
-                return post;
-            }))
+        // const posts = await Promise.all(postsWithoutUser.map(async post => {
+        //         let user = await User.findById(post.user).lean();
+        //         post = post.toJSON();
+        //         post.user = user;
+        //         return post;
+        //     }))
 
         // return user details in the same format as the post if post is empty
         if(posts.length === 0){
@@ -224,7 +222,6 @@ exports.likePost = async (req, res, next) => {
     try{
         const posts = await Post.find();
         const post = await Post.findById(req.params.id);
-        posts = posts.filter(post => post._id !== req.params.id)
         
         if(!post){
             return res.status(404).json({
@@ -241,7 +238,7 @@ exports.likePost = async (req, res, next) => {
             }
             post.likes.push(req.user.id);
             await post.save();
-            posts.push(post);
+            
             res.status(200).json({
                 success: true,
                 posts

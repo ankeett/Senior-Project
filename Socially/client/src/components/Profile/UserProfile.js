@@ -78,7 +78,7 @@ const Profile = () => {
               ))
             }
             {
-              post?.length === 0 && <h1>No posts</h1>
+              post?.length === 1 && !post[0]._id && <h1>No posts</h1>
             }
 
           </div>
