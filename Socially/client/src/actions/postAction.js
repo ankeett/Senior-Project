@@ -13,7 +13,7 @@ import axios from 'axios';
 const host = "http://localhost:4000";
 
 
-export const createPost = (content,tags,image) => async (dispatch) => {
+export const createPost = (content,tags,image,visibility) => async (dispatch) => {
     try {
         dispatch({ type: CREATE_POST_REQUEST });
         const config = {
@@ -22,7 +22,7 @@ export const createPost = (content,tags,image) => async (dispatch) => {
             },
             withCredentials: true
         }
-        const { data } = await axios.post(`${host}/api/post/create`, {content,tags,image}, config);
+        const { data } = await axios.post(`${host}/api/post/create`, {content,tags,image,visibility}, config);
         console.log(data)
         dispatch({ type: CREATE_POST_SUCCESS, payload: data });
     } catch (error) {
@@ -76,8 +76,7 @@ export const likePost = (id) => async (dispatch) => {
             withCredentials: true
         }
         const {data} = await axios.put(`${host}/api/post/like/${id}`,config);
-        console.log("data from likePost")
-        dispatch({type:LIKE_A_POST_SUCCESS,payload:data.post});
+        dispatch({type:LIKE_A_POST_SUCCESS,payload:data.posts});
         console.log(data)
         
 

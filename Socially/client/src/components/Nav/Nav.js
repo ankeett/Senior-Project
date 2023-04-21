@@ -56,6 +56,7 @@ const Nav =()=> {
     const navigate = useNavigate();
     const pathname = useLocation().pathname
     const [status,setStatus] = useState('Everyone');
+    const [visibility,setVisibility] = useState("public");
     const [images,setImages] = useState([]);
     const [tags,setTags] = useState([]);
     const [open,setOpen] = useState(0);
@@ -103,10 +104,19 @@ const Nav =()=> {
   
     }
 
+    useEffect(() => {
+      if(status === 'Everyone'){
+        setVisibility('public');
+      }
+      else{
+        setVisibility('private');
+      }
+    },[status])
+
     const handleCreatePost = (e)=>{
       if(user){
 
-        dispatch(createPost(post,tags,images));
+        dispatch(createPost(post,tags,images,visibility));
       }
       else{
         navigate('/login');
