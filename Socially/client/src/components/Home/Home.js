@@ -7,6 +7,9 @@ import {Button,TextField,InputAdornment,IconButton,Paper, useMediaQuery} from '@
 import SearchIcon from '@mui/icons-material/Search';
 import Feed from '../Post/Feed';
 import Following from '../Post/Following';
+import { useDispatch, useSelector } from 'react-redux';
+import { searchUser } from '../../actions/userAction';
+const {useNavigate} = require('react-router-dom');
 
 
 
@@ -20,10 +23,12 @@ const Home = () => {
     const [page, setPage] = useState(1);
 
     const newsType = {0: "business", 1:"sports"}
+    const navigate = useNavigate();
 
     const API_KEY = 'e703e663951343288f7fc08a70614625';
     const API_URL = `https://newsapi.org/v2/top-headlines?country=us&category=${newsType[news]}&apiKey=${API_KEY}&pageSize=5`;
 
+    const dispatch = useDispatch();
 
     useEffect(() => {
         async function fetchData() {
@@ -37,9 +42,22 @@ const Home = () => {
       }, [page,news]);
     
 
+    const users = useSelector(state => state.users);
 
+    const [searchTerm, setSearchTerm] = useState("");
 
+    const dispatchSearch = (keyword) => {
+        navigate(`/search/${keyword}`);
+        
+        // dispatch(searchUser(keyword));
+        // setSearchTerm("");
+    };
+
+    useEffect(() => {
+        console.log(users); // This will log the updated value after the state has been updated.
+    }, [users]);
   return (
+
     <div className='grid grid-flow-col-dense grid-cols-3 grid-rows-3'>
         <Box
             component="main"
@@ -77,14 +95,19 @@ const Home = () => {
             >
                 {/* <Toolbar /> */}
                 <Divider />
-                <TextField size='small' className='w-3/4 ml-4 mt-10' label="Search"
+                <TextField size='small' className='w-3/4 ml-4 mt-10' label="Search" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
                     InputProps={{
                         endAdornment:(
                             <InputAdornment position="end">
                                 <IconButton
                                 
                                 >
-                                    <SearchIcon onClick={()=>{console.log("search")}}/>
+                                    <SearchIcon onClick={()=>{
+                                        //call function that dispatches search
+                                        dispatchSearch(searchTerm)
+                                    }
+
+                                        }/>
                                 </IconButton>
                             </InputAdornment>
                         )

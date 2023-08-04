@@ -10,19 +10,18 @@ router.route("/post/create").post(isAuthenticatedUser,createPost);
 router.route("/posts/all").get(getPosts);
 
 router.route("/post/:id").get(getSinglePost);
-router.route("/post/update/:id").put(updatePost);
-router.route("/post/delete/:id").delete(deletePost);
+router.route("/post/delete/:id").delete(isAuthenticatedUser,deletePost);
 
 router.route("/post/user/:id").get(getPostsByUser);
 
-router.route("/post/likes/:id").get(getLikes);
 
 router.route("/post/like/:id").put(isAuthenticatedUser,likePost);
 
-router.route("/post/unlike/:id").put(unlikePost);
-router.route("/post/comments/:id").get(getComments);
-router.route("/post/comment/:id").put(createComment);
-router.route("/post/comment/delete/:id").delete(deleteComment);
+router.route("/post/update/:id").put(isAuthenticatedUser,updatePost);
+
+router.route("/comment/create/:id").post(isAuthenticatedUser,createComment);
+
+
 
 router.route("/tags/popular").get(getPopularTags);
 router.route('/tag/:id').get(getPostsByTag);

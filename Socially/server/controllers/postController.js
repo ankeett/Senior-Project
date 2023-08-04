@@ -43,14 +43,6 @@ exports.getPosts = async (req, res, next) => {
     try{
         const posts = await Post.find().populate('user');
 
-        //find the respective user for each post
-        // const posts = await Promise.all(postsWithoutUser.map(async post => {
-        //     let user = await User.findById(post.user);
-        //     post = post.toJSON();
-        //     post.user = user;
-        //     return post;
-        // }))
-
         res.status(200).json({
             success: true,
             posts,
@@ -113,7 +105,40 @@ exports.getSinglePost = async (req, res, next) => {
 
 exports.updatePost = async (req, res, next) => {
     try{
-        const {title,content} = req.body;
+
+        //cloudinary
+        const oldImagesFromDB = req.body.image;
+
+        //now we have  images and imagesString
+        //images refer to new ones 
+        //and imagesString refer to old ones
+
+
+         // add cloudinary - new images
+         let newImages = [];
+         if (typeof(req.body.newImages) ==="string"){
+            newImages.push(req.body.newImages);
+         }else{  
+            newImages = req.body.newImages;
+         }
+         const imagesLink = [];
+
+         //if adding new images
+         for (let i = 0; i < newImages.length; i++){
+             const result = await cloudinary.uploader.upload(newImages[i],{
+                 folder:"BeaconPosts",
+             });
+             imagesLink.push({
+                 public_id:result.public_id,
+                 url:result.secure_url,
+             })
+            
+         }
+        for (let i = 0; i< oldImagesFromDB.length; i++){
+            imagesLink.push(oldImagesFromDB[i]);
+        }
+
+        const {content,tags,visibility} = req.body;
         const post = await Post.findById(req.params.id);
         if(!post){
             return res.status(404).json({
@@ -121,18 +146,35 @@ exports.updatePost = async (req, res, next) => {
                 message: "Post not found",
             })
         }
-        if(post.user.toString() !== req.user.id){
+        console.log(post.user)
+        if(post.user._id.toString() !== req.user.id){
             return res.status(401).json({
                 success: false,
                 message: "You are not authorized to update this post",
             })
         }
-        post.title = title;
-        post.content = content;
-        await post.save();
+        const updatedPost = await Post.findByIdAndUpdate(req.params.id,{
+            content,tags,image: imagesLink,visibility
+        },{
+            new: true,
+            runValidators: true,
+            useFindAndModify: false,
+        })
+
+        updatedPost.populate('user').execPopulate();
+
+        res.status(200).json({
+            success: true,
+            post: updatedPost,
+        })
     }
     catch(error){
-        next(error);
+        console.log(error)
+        res.status(500).json({
+            success: false,
+            message: "Server error",
+        })
+
     }
 }
 
@@ -145,7 +187,7 @@ exports.deletePost = async (req, res, next) => {
                 message: "Post not found",
             })
         }
-        if(post.user.toString() !== req.user.id){
+        if(post.user._id.toString() !== req.user.id){
             return res.status(401).json({
                 success: false,
                 message: "You are not authorized to delete this post",
@@ -158,7 +200,11 @@ exports.deletePost = async (req, res, next) => {
         })
     }
     catch(error){
-        next(error);
+        res.status(500).json({
+            success: false,
+            message: "Server error",
+        })
+
     }
 
 }
@@ -241,7 +287,7 @@ exports.likePost = async (req, res, next) => {
             
             res.status(200).json({
                 success: true,
-                posts
+                message: "Post liked successfully",
             })
         }
         else{
@@ -287,24 +333,7 @@ exports.unlikePost = async (req, res, next) => {
     }
 }
 
-exports.getComments = async (req, res, next) => {
-    try{
-        const post = await Post.findById(req.params.id);
-        if(!post){
-            return res.status(404).json({
-                success: false,
-                message: "POst not found",
-            })
-        }
-        res.status(200).json({
-            success: true,
-            comments: post.comments,
-        })
-    }
-    catch(error){
-        next(error);
-    }
-}
+
 
 exports.createComment = async (req, res, next) => {
     try{
@@ -316,19 +345,25 @@ exports.createComment = async (req, res, next) => {
                 message: "Post not found",
             })
         }
+        const commenter = await User.findById(req.user.id);
         const newComment = {
             comment,
-            user: req.user.id,
+            user: commenter
         }
         post.comments.push(newComment);
         await post.save();
+
+        post.populate('user')
         res.status(200).json({
             success: true,
-            comments: post.comments,
+            post,
         })
     }
     catch(error){
-        next(error);
+        res.status(500).json({
+            success: false,
+            message: "Server error",
+        })
     }
 }
 
@@ -436,6 +471,26 @@ exports.getFollowingsPosts = async (req, res, next) => {
             posts,
         })
         
+    }
+    catch(error){
+        res.status(400).json({
+            success: false,
+            message: "Something went wrong",
+        })
+    }
+}
+
+//seach tags, users, posts
+exports.search = async (req, res, next) => {
+    try{
+        const {search} = req.body;
+        const posts = await Post.find({$text: {$search: search}});
+        const users = await User.find({$text: {$search: search}});
+        res.status(200).json({
+            success: true,
+            posts,
+            users,
+        })
     }
     catch(error){
         res.status(400).json({

@@ -161,3 +161,28 @@ export const postUserReducer = (state = {poster:{}}, action) => {
             return state;
     }
 }
+
+export const searchUserReducer = (state = {users:[]}, action) => {
+    switch(action.type){
+        case ALL_USERS_REQUEST:
+                return{
+                    ...state,
+                    loading:true,
+                    error:null
+                }
+            case ALL_USERS_SUCCESS:
+                return{
+                    ...state,
+                    loading:false,
+                    users:action.payload
+                }
+            case ALL_USERS_FAIL:
+                return{
+                    ...state,
+                    loading:false,
+                    error:action.payload
+                }
+        default:
+            return state;
+    }
+}

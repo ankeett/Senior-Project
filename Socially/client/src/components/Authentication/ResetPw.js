@@ -6,6 +6,8 @@ import LockResetIcon from '@mui/icons-material/LockReset';
 import { useNavigate , useParams} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {resetPassword} from '../../actions/userAction';
+import Error from '../error/Error';
+
 const Reset = () => {
     const dispatch = useDispatch();
     const {error, success, loading} = useSelector(state=>state.forgotPw);
@@ -17,6 +19,8 @@ const Reset = () => {
 
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [hasError, setHasError] = useState(false);
+    const [open, setOpen] = useState(true);
 
 
     const resetPasswordSubmit = (e) => {
@@ -27,7 +31,8 @@ const Reset = () => {
             console.log("Password match")
         }
         else{
-            alert("Password no match")
+            hasError("Password no match")
+            setOpen(true)
         }
         
     }
@@ -37,6 +42,13 @@ const Reset = () => {
             navigate("/signin");
         }
     },[dispatch, error, success])
+
+    useEffect(() => {
+        if (error) {
+            setHasError(error)
+            setOpen(true)
+        }
+    }, [error])
     return (
         <>
            <Container component='main' maxWidth='xs'>
@@ -72,6 +84,10 @@ const Reset = () => {
                     </form>
                 </Paper>
            </Container>
+           {
+            hasError &&
+            <Error hasError={hasError} setOpen={setOpen} open={open}/>
+           }
            </>
 
        )

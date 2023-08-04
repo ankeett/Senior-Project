@@ -212,6 +212,9 @@ exports.forgotPassword = async (req,res,next) => {
     }
     const token = user.getResetPasswordToken();
     await user.save({validateBeforeSave: false});
+
+    console.log(token)
+    console.log(user)
     
     const resetPasswordURL = `http://localhost:3000/api/password/reset/${token}`;
     const message = `Your password reset token is as follows:\n\n${resetPasswordURL}\n\nIf you have not requested this email, then please ignore it.`;
@@ -234,6 +237,7 @@ exports.forgotPassword = async (req,res,next) => {
         });
     }
     catch(error){
+        console.log(error)
         user.resetPasswordToken = undefined;
         user.resetPasswordExpire = undefined;
         await user.save({validateBeforeSave: false});
@@ -429,10 +433,50 @@ exports.unfollowUser = async (req,res,next) => {
 
     }
     catch(error){
+       
         res.status(500).json({
             success:false,
             message:"User could not be unfollowed."
         });
         //throw new Error("User could not be unfollowed.");
+    }
+}
+
+exports.searchUser = async (req,res,next) => {
+    try{
+
+        const query = req.params.query || '';
+
+        const searchQuery = {
+            $or: [
+              { name: { $regex: query, $options: 'i' } },
+              { username: { $regex: query, $options: 'i' } },
+              { email: { $regex: query,$options: 'i' } }
+            ]
+          };
+          
+          const users = await User.find(searchQuery).select("-password");        
+          if(users.length == 0){
+            res.status(404).json({success:false,message:"Users not found"});
+            return;
+            //throw new Error("Users not found");
+        }
+        res.status(200).json({
+            success:true,
+            users
+        });
+
+    }
+    catch(error){
+        if (error.name === "MongoError") {
+            console.error("MongoDB Error:", error);
+        } else {
+            console.error("Error searching users:", error);
+        }
+        res.status(500).json({
+            success:false,
+            message:"User could not be searched."
+        });
+        //throw new Error("User could not be searched.");
     }
 }

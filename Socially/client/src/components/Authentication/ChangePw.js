@@ -5,7 +5,8 @@ import VisibilityOffIcon from '@mui/icons-material/Visibility';
 import ManageHistoryRoundedIcon from '@mui/icons-material/ManageHistoryRounded';
 import { useNavigate} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { changePassword} from '../../actions/userAction';
+import { changePassword,clearErrors} from '../../actions/userAction';
+import Error from '../error/Error';
 
 const ChangePassword = () => {
     const dispatch = useDispatch();
@@ -23,15 +24,19 @@ const ChangePassword = () => {
     const [prevPassword, setPrevPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [hasError, setHasError] = useState(false);
+    const [open, setOpen] = useState(true);
 
     const changePasswordSubmit = (e) => {   
         e.preventDefault();
        
         if (newPassword == confirmPassword){
             dispatch(changePassword(prevPassword, newPassword));
+            navigate("/home")
         }
         else{
-            alert("Password no match")
+            setHasError("Password no match")
+            setOpen(true)
         }
         
     }
@@ -40,7 +45,16 @@ const ChangePassword = () => {
         if (success){
             navigate("/signin"); 
         }
-    },[dispatch, error, isUpdated])
+    },[dispatch, isUpdated])
+
+    useEffect(() => {
+        if (error) {
+            setHasError(error)
+            setOpen(true)
+            dispatch(clearErrors())
+        }
+    }, [error,dispatch])
+
     return (
         <>
            <Container component='main' maxWidth='xs'>
@@ -53,7 +67,7 @@ const ChangePassword = () => {
                     <form   onSubmit={changePasswordSubmit} >
                         <Grid container spacing={2} className='gap-[30px]'>
 
-                            <TextField label="Old Password" name="prevPassword" id="ppw" type={showOldPassword ?"text":"password" }value={prevPassword} fullWidth autoFocus onChange = {(e)=>setPrevPassword(e.target.value)} 
+                            <TextField autoFocus label="Old Password" name="prevPassword" id="ppw" type={showOldPassword ?"text":"password" }value={prevPassword} fullWidth onChange = {(e)=>setPrevPassword(e.target.value)} 
                                 InputProps={{
                                     endAdornment:(
                                         <InputAdornment position="end">
@@ -68,7 +82,7 @@ const ChangePassword = () => {
                                 }}                  
                             />   
 
-                            <TextField label="New Password" name="password" id="pw" type={showNewPassword ?"text":"password" }value={newPassword} fullWidth autoFocus onChange = {(e)=>setNewPassword(e.target.value)} 
+                            <TextField label="New Password" name="password" id="pw" type={showNewPassword ?"text":"password" }value={newPassword} fullWidth onChange = {(e)=>setNewPassword(e.target.value)} 
                                 InputProps={{
                                     endAdornment:(
                                         <InputAdornment position="end">
@@ -84,11 +98,15 @@ const ChangePassword = () => {
                             />   
 
                             <TextField label="Confirm Password" type="password" value={confirmPassword} onChange = {(e)=>setConfirmPassword(e.target.value)} required fullWidth/>
-                            <Button onClick={changePasswordSubmit} fullWidth className='text-white bg-blue-700 rounded-lg normal-case hover:scale-105'>Reset Password</Button>
+                            <Button onClick={changePasswordSubmit} fullWidth className='text-white bg-[#1da1f2] rounded-lg normal-case hover:scale-105'>Reset Password</Button>
                         </Grid>
                     </form>
                 </Paper>
            </Container>
+           {
+                hasError && 
+                <Error hasError={hasError} setOpen={setOpen} open={open}/>
+           }
            </>
        )
 }

@@ -118,7 +118,7 @@ const Signup = () => {
                         </div>
                         <div className='flex flex-col mt-14 gap-7 align-middle justify-center'>
                             <Button className='text-white bg-[#1da1f2] rounded-full normal-case h-12 text-base' onClick ={handleSubmit} fullWidth>Sign Up</Button>
-                            <Link className='text-center' to='/signin'>Already have an account? Sign In</Link>
+                            <Link className='text-center' to='/login'>Already have an account? Sign In</Link>
                         </div>
                     </form>
                 </Paper>

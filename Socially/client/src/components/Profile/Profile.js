@@ -4,6 +4,7 @@ import { getUserPosts } from '../../actions/postAction'
 import Post from '../Post/Post'
 import { useNavigate } from 'react-router-dom'
 import { loadUser } from '../../actions/userAction'
+import VerifiedIcon from '@mui/icons-material/Verified';
 
 
 const Profile = () => {
@@ -21,9 +22,6 @@ const Profile = () => {
     dispatch(getUserPosts(user._id))
   }, [dispatch])
 
-  
-
-
 
   return (
     <div>
@@ -40,7 +38,11 @@ const Profile = () => {
             )
           }
           <div>
+            <div className='flex flex-row'>
+
             <h1 className='text-2xl'>{user.name}</h1>
+            <VerifiedIcon className='mt-4 text-blue-500'/>
+            </div>
             <p>@{user.username}</p>
           </div>
         </div>

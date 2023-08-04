@@ -1,22 +1,20 @@
 const mongoose = require("mongoose");
 
-const messageSchema = new mongoose.Schema({
-    sender: {
+const notificationSchema = new mongoose.Schema({
+    user: {
         type: mongoose.Schema.ObjectId,
         ref: "User",
         required: true,
     },
-    receiver: {
+    post: {
         type: mongoose.Schema.ObjectId,
-        ref: "User",
+        ref: "Post",
         required: true,
     },
-    content: [
-        {
-            type: String,
-            required: [true, "Please enter message content"],
-        },
-    ],
+    content: {
+        type: String,
+        required: [true, "Please enter notification content"],
+    },
     createdAt: {
         type: Date,
         default: Date.now,
@@ -27,4 +25,4 @@ const messageSchema = new mongoose.Schema({
     },
 });
 
-module.exports = mongoose.model("Message", messageSchema);
+module.exports = mongoose.model("Notification", notificationSchema);

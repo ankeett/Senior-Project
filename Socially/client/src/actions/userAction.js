@@ -203,3 +203,18 @@ export const clearErrors = () => async(dispatch)=>{
    dispatch({type:CLEAR_ERRORS});
 }
 
+export const searchUser = (keyword) => async(dispatch)=>{
+    try{
+        dispatch({type:ALL_USERS_REQUEST});
+        const config = {
+            headers:{"Content-type":"application/json"},
+            withCredentials: true
+        }
+        const {data} = await axios.get(`${host}/api/search/${keyword}`,config);
+        dispatch({type:ALL_USERS_SUCCESS,payload:data.users});
+        console.log(data.users)
+    }
+    catch(error){
+        dispatch({type:ALL_USERS_FAIL,payload:error.response.data.message});
+    }
+}

@@ -74,5 +74,15 @@ const postSchema = new mongoose.Schema({
 
 });
 
+//store user information inside user of comment
+postSchema.pre(/^find/, function (next) {
+    this.populate({
+        path: "user",
+    }).populate({
+        path: "comments.user",
+    });
+    next();
+});
+
 module.exports = mongoose.model("Post", postSchema);
 

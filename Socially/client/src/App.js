@@ -20,6 +20,8 @@ import UserProfile from './components/Profile/UserProfile';
 import PostPage from './components/Post/PostPage';
 import { useSelector } from 'react-redux';
 import PostsByTags from './components/Explore/PostsByTags';
+import Update from './components/Post/Update';
+import Search from './components/Home/Search';
 
 
 function App() {
@@ -52,6 +54,11 @@ function App() {
         <Route exact path='/profile/user/:id' element={<UserProfile/>}/>
         <Route exact path='/post/:id' element={<PostPage/>}/>
         <Route exact path='/postsByTag/:id' element={<PostsByTags/>}/>
+        <Route exact path="/update/:id" element={<Update/>}/>
+
+        <Route exact path= '/search/:search' element={<Search/>}/>
+
+        <Route path='*' element={<h1>404 not found</h1>}/>
 
 
 

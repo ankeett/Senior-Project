@@ -3,11 +3,13 @@ import {useSelector} from 'react-redux'
 import {TextField,Button} from '@mui/material'
 import { useDispatch } from 'react-redux'
 import { logout } from '../../actions/userAction'
+import { useNavigate } from 'react-router-dom'
 
 const More = () => {
   const {user} = useSelector(state=>state.user)
   console.log(user)
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const handleClick = () => {
     dispatch(logout())
@@ -25,8 +27,9 @@ const More = () => {
           <TextField label='Email' value={user?.email} disabled/>
 
           <div className='flex flex-row gap-5'>
-          <Button className='text-white bg-[#1da1f2] normal-case h-12 rounded-full text-base' fullWidth>Forget Password</Button>
-          <Button className='text-white bg-[#1da1f2] normal-case h-12 rounded-full text-base' fullWidth>Change Password</Button>
+          <Button className='text-white bg-[#1da1f2] normal-case h-12 rounded-full text-base'  onClick={()=>{navigate('/forgotpassword')
+          }} fullWidth>Forget Password</Button>
+          <Button className='text-white bg-[#1da1f2] normal-case h-12 rounded-full text-base' onClick={()=>{navigate('/changePassword')}} fullWidth>Change Password</Button>
           </div>
           <Button className='text-white bg-[#1da1f2] normal-case h-12 rounded-full text-base' onClick={handleClick}>Logout</Button>
         </div>
