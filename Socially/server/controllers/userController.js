@@ -444,8 +444,7 @@ exports.unfollowUser = async (req,res,next) => {
 
 exports.searchUser = async (req,res,next) => {
     try{
-
-        const query = req.params.query || '';
+                const query = req.params.query || '';
 
         const searchQuery = {
             $or: [
@@ -455,12 +454,15 @@ exports.searchUser = async (req,res,next) => {
             ]
           };
           
-          const users = await User.find(searchQuery).select("-password");        
+          const users = await User.find(searchQuery).select("-password");
+          //remove current user from search results
+          
           if(users.length == 0){
-            res.status(404).json({success:false,message:"Users not found"});
-            return;
-            //throw new Error("Users not found");
-        }
+              res.status(404).json({success:false,message:"Users not found"});
+              return;
+              //throw new Error("Users not found");
+            }
+
         res.status(200).json({
             success:true,
             users

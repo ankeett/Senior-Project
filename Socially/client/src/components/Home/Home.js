@@ -96,6 +96,11 @@ const Home = () => {
                 {/* <Toolbar /> */}
                 <Divider />
                 <TextField size='small' className='w-3/4 ml-4 mt-10' label="Search" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyPress={(e)=>{
+                    if(e.key === 'Enter'){
+                        dispatch(dispatchSearch(searchTerm))
+                    }
+                }}
                     InputProps={{
                         endAdornment:(
                             <InputAdornment position="end">
