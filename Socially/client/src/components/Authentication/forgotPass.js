@@ -5,12 +5,28 @@ import {useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {  forgotPassword } from '../../actions/userAction';
 
+
+/*
+ForgotPw()
+NAME
+    ForgotPw
+SYNOPSIS
+    ForgotPw();
+DESCRIPTION
+    This React component allows a user to initiate the password reset process by providing their email.
+    It dispatches a "forgotPassword" action, which sends a reset password email to the user's email address.
+    Upon submission, it redirects the user to the "checkforgot" page.
+RETURNS
+    Returns a React component that renders a form for initiating the password reset process.
+*/
+
 const ForgotPw = () => {
     const [email, setEmail] = useState("");
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const {error, success, isLoading, isActivated, user} = useSelector(state=>state.user);
 
+    // Function to handle form submission
     const forgotHandler = (e) => {
         e.preventDefault();
         dispatch(forgotPassword(email));

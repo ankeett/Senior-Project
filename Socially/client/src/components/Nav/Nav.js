@@ -30,10 +30,20 @@ import {createPost} from '../../actions/postAction'
 
 
 
-
-
-
-
+/*
+Nav()
+NAME
+    Nav
+SYNOPSIS
+    Nav();
+DESCRIPTION
+    This React component represents the main navigation menu of your application.
+    It includes links to various sections like Home, Explore, Notifications, Messages, Profile, and More.
+    It also provides options for creating a new post with advanced settings.
+    The component adjusts its layout based on the screen size, providing a responsive design.
+RETURNS
+    Returns a React component that renders the navigation menu and handles user interactions.
+*/
 const Nav =()=> {
     let drawerWidth = 360
     const isLargeScreen = useMediaQuery('(min-width:860px)');
@@ -41,13 +51,12 @@ const Nav =()=> {
     isLargeScreen ? drawerWidth = 300 : drawerWidth = 130
 
     const {user,isAuthenticated} = useSelector(state=>state.user)
-    console.log(isAuthenticated)
 
     const Menus = [
       {title: "Home", src: <HomeOutlinedIcon/>,clicked:<HomeIcon/>, link: '/home',isAuth: false },
       {title: "Explore",src: <ExploreOutlinedIcon/>,clicked:<ExploreIcon/>,link: '/explore',isAuth: false},
       { title: "Notifications", src: <NotificationsNoneOutlinedIcon/>,clicked:<NotificationsIcon/> ,link: '/notifications', isAuth: false},
-      { title: "Messages", src: <MessageOutlinedIcon/>,clicked:<MessageIcon/> ,link: '/messages',isAuth: false},
+      { title: "Messages", src: <MessageOutlinedIcon/>,clicked:<MessageIcon/> ,link: '/messages',isAuth: !user},
       { title: "Profile", src: <PersonOutlineOutlinedIcon/>,clicked:<PersonIcon/> ,link: '/profile',isAuth: !user},
       { title: "More", src: <ExpandCircleDownOutlinedIcon/>,clicked:<ExpandCircleDownIcon/> ,link: '/more',isAuth: false},
     ]; 
@@ -55,17 +64,22 @@ const Nav =()=> {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const pathname = useLocation().pathname
+
+    //State variables
     const [status,setStatus] = useState('Everyone');
     const [visibility,setVisibility] = useState("public");
     const [images,setImages] = useState([]);
     const [tags,setTags] = useState([]);
     const [open,setOpen] = useState(0);
     const [post,setPost] = useState("");
+    const [advanced, setAdvanced] = useState(false);
 
+    
     useEffect(() => {
       navigate('/home');
     }, []);
-
+    
+    // Function to add the tag to the list of tags
     const handleAdd = (e) =>{
       if(e.key === 'Enter' && e.target.value !== '')
       {
@@ -73,23 +87,22 @@ const Nav =()=> {
         e.target.value = '';
       }
     }
-
+    
+    // Function to delete the tag from the list of tags
     const handleDelete = (tagToDelete)=>{
       setTags(tags.filter((tag) => tag !==tagToDelete));
     }
     
-
-    const [advanced, setAdvanced] = useState(false);
+    // Function to toggle the advanced settings
     const handlePost = (e) =>{
       e.preventDefault();
       setAdvanced((prevAdvanced)=>!prevAdvanced);
     }
 
+    // Function to handle image uploads
     const handleImages = (e)=>{
-   
       const files = Array.from(e.target.files);
       setImages([]);
-      console.log(files);
       files.forEach((file)=>{
           const reader = new FileReader();
   
@@ -104,6 +117,7 @@ const Nav =()=> {
   
     }
 
+    // Function to handle the post visibility
     useEffect(() => {
       if(status === 'Everyone'){
         setVisibility('public');
@@ -113,6 +127,7 @@ const Nav =()=> {
       }
     },[status])
 
+    // Function to create a new post
     const handleCreatePost = (e)=>{
       if(user){
 
@@ -166,7 +181,6 @@ const Nav =()=> {
 
           <Button className='text-white bg-[#1da1f2] normal-case h-12 rounded-full text-base w-3/4'  onClick={handlePost}>Post</Button>
 
-          
         </List>  
         <div className=' absolute text-center inset-x-0 bottom-0'>
             <Paper elevation={0} className='m-3 p-3 '>
@@ -191,7 +205,6 @@ const Nav =()=> {
       </div> 
             
       </Drawer>
-      
       
     </Box>
 
@@ -231,9 +244,6 @@ const Nav =()=> {
                   )
                 })}
               </div>
-              
-              
-            
                 <div className='grid grid-cols-2 gap-6'>
                 {images &&
                       images.map((img,index)=>{

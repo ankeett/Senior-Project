@@ -1,6 +1,20 @@
 import {Container,Paper, Typography,CardMedia} from '@mui/material'
 import React from 'react'
 
+
+/*
+CheckActivate()
+NAME
+    CheckActivate
+SYNOPSIS
+    CheckActivate();
+DESCRIPTION
+    This React component is displayed to the user after they have successfully signed up.
+    It informs the user that a confirmation email will be sent with an activation link.
+RETURNS
+    Returns a React component that displays a message to the user.
+*/
+
 const CheckActivate = () => {
   return (
     <div>

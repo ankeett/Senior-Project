@@ -6,37 +6,67 @@ import LockResetIcon from '@mui/icons-material/LockReset';
 import { useNavigate , useParams} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {resetPassword} from '../../actions/userAction';
+import Error from '../error/Error';
+
+
+/*
+Reset()
+NAME
+    Reset
+SYNOPSIS
+    Reset();
+DESCRIPTION
+    This React component allows a user to reset their password using a reset token.
+    It provides a form for entering the new password and confirming it.
+    It dispatches the "resetPassword" action to reset the password.
+RETURNS
+    Returns a React component that renders a form for password reset.
+*/
+
 const Reset = () => {
     const dispatch = useDispatch();
     const {error, success, loading} = useSelector(state=>state.forgotPw);
     const navigate = useNavigate();
     const {token} = useParams();
 
+    // State variables
     const [showPassword, setShowPassword] = useState(false);
-    const handleClickShowPassword = () => setShowPassword(!showPassword);
-
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-
+    const [hasError, setHasError] = useState(false);
+    const [open, setOpen] = useState(true);
+    
+    // Function to toggle password visibility
+    const handleClickShowPassword = () => setShowPassword(!showPassword);
 
     const resetPasswordSubmit = (e) => {
         e.preventDefault();
        
         if (newPassword == confirmPassword){
             dispatch( resetPassword(token,newPassword));
-            console.log("Password match")
         }
         else{
-            alert("Password no match")
+            hasError("Password no match")
+            setOpen(true)
         }
         
     }
 
+    // Redirect the user to the login page if the password is successfully reset.
     useEffect(()=>{
         if (success){
-            navigate("/signin");
+            navigate("/login");
         }
     },[dispatch, error, success])
+
+    // Set the error state if there's an error.
+    useEffect(() => {
+        if (error) {
+            setHasError(error)
+            setOpen(true)
+        }
+    }, [error])
+
     return (
         <>
            <Container component='main' maxWidth='xs'>
@@ -72,6 +102,12 @@ const Reset = () => {
                     </form>
                 </Paper>
            </Container>
+
+           {/* Display an error message if there's an error. */}
+           {
+            hasError &&
+            <Error hasError={hasError} setOpen={setOpen} open={open}/>
+           }
            </>
 
        )

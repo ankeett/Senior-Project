@@ -5,7 +5,19 @@ import { useDispatch,useSelector } from 'react-redux'
 import { popularTags } from '../../actions/postAction'
 import { useNavigate } from 'react-router-dom';
 
-
+/*
+Explore()
+NAME
+    Explore
+SYNOPSIS
+    Explore();
+DESCRIPTION
+    This React component represents the Explore page of your application.
+    It displays popular tags and provides search functionality and a list of people to follow.
+    The component adjusts its layout based on the screen size.
+RETURNS
+    Returns a React component that renders the Explore page.
+*/
 
 const Explore = () => {
   const dispatch = useDispatch()
@@ -15,10 +27,9 @@ const Explore = () => {
   const {post} = useSelector(state=>state.posts)
 
   useEffect(()=>{
+    // Dispatch the "popularTags" action to get popular tags
     dispatch(popularTags())
   },[dispatch])
-
-  console.log(tags)
 
 
 
@@ -28,6 +39,7 @@ const Explore = () => {
         <div className='flex flex-col'>
           <strong className='font-semibold mt-4 mb-4'>Popular Tags</strong>
           <div className='flex flex-col gap-3 w-3/4'>
+            {/* Render popular tags */}
             {tags && tags.sort((a, b) => b.count - a.count).map((t)=>{
               return(
                 <Card className='p-8 cursor-pointer hover:mb-1 hover:font-semibold' onClick={()=> {
@@ -45,7 +57,7 @@ const Explore = () => {
           </div>
         </div>
        
-
+        {/* Drawer for large screens */}
       {isLargeScreen && (
         <Drawer
           sx={{

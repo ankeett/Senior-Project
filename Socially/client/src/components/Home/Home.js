@@ -7,24 +7,44 @@ import {Button,TextField,InputAdornment,IconButton,Paper, useMediaQuery} from '@
 import SearchIcon from '@mui/icons-material/Search';
 import Feed from '../Post/Feed';
 import Following from '../Post/Following';
+import { useDispatch, useSelector } from 'react-redux';
+const {useNavigate} = require('react-router-dom');
 
 
-
+/*
+Home()
+NAME
+    Home
+SYNOPSIS
+    Home();
+DESCRIPTION
+    This React component represents the main home page of your application.
+    It displays a feed of posts and provides a search feature.
+    It also provides a list of popular news articles.
+RETURNS
+    Returns a React component that renders the home page.
+*/
 const Home = () => {
+     // Check if the screen size is large
     const isLargeScreen = useMediaQuery('(min-width:1200px)');
-    const [open,setOpen] = useState(0);
 
+    // State variables for news
+    const [open,setOpen] = useState(0);
     const [news,setNews] = useState(0);
     const [articles, setArticles] = useState([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
 
     const newsType = {0: "business", 1:"sports"}
+    const navigate = useNavigate();
 
+    // API Key for fetching news
     const API_KEY = 'e703e663951343288f7fc08a70614625';
     const API_URL = `https://newsapi.org/v2/top-headlines?country=us&category=${newsType[news]}&apiKey=${API_KEY}&pageSize=5`;
 
+    const dispatch = useDispatch();
 
+    // Fetch news articles
     useEffect(() => {
         async function fetchData() {
           setLoading(true);
@@ -37,7 +57,14 @@ const Home = () => {
       }, [page,news]);
     
 
+    const users = useSelector(state => state.users);
 
+    const [searchTerm, setSearchTerm] = useState("");
+
+    // Function to dispatch search action and navigate to search results page
+    const dispatchSearch = (keyword) => {
+        navigate(`/search/${keyword}`);
+    };
 
   return (
     <div className='grid grid-flow-col-dense grid-cols-3 grid-rows-3'>
@@ -57,11 +84,13 @@ const Home = () => {
                 </Button>
 
             </div>
+            {/* Render either Feed or Following component based on "open" state */}
                 {
                     open === 0 ? <Feed/> : <Following/>
 
                 }
         </Box>
+        {/* Drawer for large screens */}
         {isLargeScreen && (
             <Drawer
                 sx={{
@@ -75,16 +104,24 @@ const Home = () => {
                 variant="permanent"
                 anchor="right"
             >
-                {/* <Toolbar /> */}
                 <Divider />
-                <TextField size='small' className='w-3/4 ml-4 mt-10' label="Search"
+                <TextField size='small' className='w-3/4 ml-4 mt-10' label="Search" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyPress={(e)=>{
+                    if(e.key === 'Enter'){
+                        dispatch(dispatchSearch(searchTerm))
+                    }
+                }}
                     InputProps={{
                         endAdornment:(
                             <InputAdornment position="end">
                                 <IconButton
-                                
                                 >
-                                    <SearchIcon onClick={()=>{console.log("search")}}/>
+                                    <SearchIcon onClick={()=>{
+                                        //call function that dispatches search
+                                        dispatchSearch(searchTerm)
+                                    }
+
+                                        }/>
                                 </IconButton>
                             </InputAdornment>
                         )
@@ -95,6 +132,7 @@ const Home = () => {
                         <h4>Latest News</h4>
 
                         <div className='flex flex-row normal-case'>
+                            {/* Render either Business or Sports news based on "news" state */}
                             <Button className={`font-bold normal-case ${news === 0 ? "underline underline-offset-[16px] decoration-4 text-[#1da1f2]" : "text-gray-800  "}`} fullWidth onClick={()=>{setNews(0)}}>
                                 Business
                             </Button>
@@ -107,6 +145,7 @@ const Home = () => {
                             <a href={article.url} target="_blank" className=' text-black'><p>{article.title}</p></a>
                             </div>
                         ))}
+                        {/* Load more news articles or show loading */}
                         {loading ? (
                             <p>Loading...</p>
                         ) : (

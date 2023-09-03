@@ -4,6 +4,48 @@ const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 
+/*
+userSchema
+NAME
+    userSchema
+SYNOPSIS
+    userSchema;
+DESCRIPTION
+    This Mongoose schema defines the structure for user profiles. It includes properties such as name, username, email, password,
+    avatar information, user role, creation timestamp, tokens for password reset and account activation, account activation status,
+    user followers and followings, and timestamps for document creation and updates.
+PROPERTIES
+    - name: String (required: true, maxLength: 30)
+        - The name of the user, required with a maximum length of 30 characters.
+    - username: String (required: true, maxLength: 30, unique)
+        - The username of the user, required, unique, and with a maximum length of 30 characters.
+    - email: String (required: true, unique, validate: isEmail)
+        - The email address of the user, required, unique, and validated to be in email format.
+    - password: String (required: true, minlength: 8, select: false)
+        - The password of the user, required with a minimum length of 8 characters. 'select: false' hides this field in query results.
+    - avatar: Object
+        - An object containing 'public_id' and 'url' properties representing the user's avatar image information.
+    - role: String (default: "user")
+        - The role of the user, with a default value of "user".
+    - createdAt: Date (default: Date.now)
+        - The timestamp when the user profile was created, with a default value set to the current date and time.
+    - resetPasswordToken: String
+        - A token for password reset.
+    - resetPasswordExpire: Date
+        - The expiration date for the password reset token.
+    - activateToken: String
+        - A token for account activation.
+    - activateExpire: Date
+        - The expiration date for the account activation token.
+    - isActivated: Boolean (default: false)
+        - A flag indicating whether the user's account is activated (default is set to false).
+    - following: Array of ObjectId (ref: "User")
+        - An array of user IDs representing users that the current user is following.
+    - followers: Array of ObjectId (ref: "User")
+        - An array of user IDs representing users who are following the current user.
+TIMESTAMPS
+    The schema uses the 'timestamps' option to automatically generate 'createdAt' and 'updatedAt' timestamps for documents.
+*/
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -85,13 +127,6 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
     return await bcryptjs.compare(enteredPassword, this.password);
 }
 
-//returning JWT token
-// userSchema.methods.getJwtToken = function () {
-//     return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
-//         expiresIn: process.env.JWT_EXPIRES_TIME,
-//     });
-// }
-
 //generate password reset token
 userSchema.methods.getResetPasswordToken = function () {
     //generate token
@@ -127,6 +162,3 @@ userSchema.methods.getActivateToken = function () {
 }
 
 module.exports = mongoose.model("User", userSchema);
-
-
-

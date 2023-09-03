@@ -4,25 +4,32 @@ import { getUserPosts } from '../../actions/postAction'
 import Post from '../Post/Post'
 import { useNavigate } from 'react-router-dom'
 import { loadUser } from '../../actions/userAction'
+import VerifiedIcon from '@mui/icons-material/Verified';
 
-
+/*
+Profile
+NAME
+    Profile
+SYNOPSIS
+    Profile();
+DESCRIPTION
+    This React component displays a current user's profile page. It shows the user's details, including their name, username, profile picture, and a list of their posts.
+PARAMETERS
+    None.
+RETURNS
+    Returns a React component that renders a user's profile page.
+*/
 const Profile = () => {
 
-  //load user details
-  //load user posts
-  //load user followers
-  //load user following
   const {post} = useSelector(state => state.posts)
   const {user} = useSelector(state => state.user)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
+  // Redirect the user to the login page if they're not logged in.
   useEffect(() => {
     dispatch(getUserPosts(user._id))
   }, [dispatch])
-
-  
-
 
 
   return (
@@ -40,7 +47,11 @@ const Profile = () => {
             )
           }
           <div>
+            <div className='flex flex-row'>
+
             <h1 className='text-2xl'>{user.name}</h1>
+            <VerifiedIcon className='mt-4 text-blue-500'/>
+            </div>
             <p>@{user.username}</p>
           </div>
         </div>
