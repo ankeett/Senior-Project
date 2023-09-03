@@ -1,7 +1,7 @@
-import React, { useEffect,useRef } from 'react'
+import React,{useState} from 'react'
 import {Box,Avatar,Typography,Divider,Button, Paper,Chip,Link,Menu, MenuItem, Popper, Grow, MenuList} from '@mui/material'
 import {useSelector,useDispatch} from 'react-redux'
-import {userDetails,likePost,deletePost} from '../../actions/postAction'
+import {likePost,deletePost} from '../../actions/postAction'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +10,22 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import VerifiedIcon from '@mui/icons-material/Verified';
 
+/*
+Post(p)
+NAME
+    Post
+SYNOPSIS
+    Post(p);
+    - p: An object representing a post.
+DESCRIPTION
+    This React component displays a single post.
+    It shows the user's profile picture, username, post content, images, tags, likes, and comments.
+    Users can like the post, view comments, and perform additional actions (e.g., save, edit, delete).
+PARAMETERS
+    - p: An object representing a post, including user, content, images, tags, likes, and comments.
+RETURNS
+    Returns a React component that renders a single post.
+*/
 const Post = ({p}) => {
     const dispatch = useDispatch()
     const {user:currentUser} = useSelector(state=>state.user)
@@ -17,9 +33,8 @@ const Post = ({p}) => {
     const [open,setOpen] = React.useState(false);
     const anchorRef = React.useRef(null);
 
-    
+    // Function to handle liking a post
     const handleLike = ()=>{
-        console.log('handleLike')
         if(!currentUser){
             return
         }
@@ -27,22 +42,27 @@ const Post = ({p}) => {
         dispatch(likePost(p._id))
     }
     
+    // Function to handle viewing comments
     const handleComment = ()=>{
-      console.log('handleComment')
       navigate(`/post/${p._id}`)
     }
 
+    // Function to handle additional actions (e.g., save, edit, delete)
     const handleClose = (event) => {
       if (anchorRef.current && anchorRef.current.contains(event.target)) {
         return;
       }
       setOpen(false);
     }
+    // Function to handle additional actions (e.g., save, edit, delete)
     const handleToggle = () => {
       setOpen((prevOpen) => !prevOpen);
     };
 
+
     const prevOpen = React.useRef(open);
+
+    // Function to handle additional actions (e.g., save, edit, delete)
     React.useEffect(() => {
       if (prevOpen.current === true && open === false) {
         anchorRef.current.focus();
@@ -52,7 +72,6 @@ const Post = ({p}) => {
     }, [open]);
 
     const handleSave = ()=>{
-      console.log('handleSave')
 
       setOpen(false)
     }
@@ -67,6 +86,20 @@ const Post = ({p}) => {
       navigate(`/update/${p._id}`)
 
       setOpen(false)
+    }
+
+    const [copied, setCopied] = useState(false);
+
+    // Function to handle copying a post link
+    const handleCopyLink = (id) => (event) => {
+      navigator.clipboard.writeText(`http://localhost:3000/post/${id}`)
+
+      setCopied(true);
+
+      setTimeout(() => {
+        setCopied(false);
+      }, 3000);
+      
     }
 
   return (
@@ -205,20 +238,22 @@ const Post = ({p}) => {
                 
                 <div className='flex flex-row'>
                 <Button className='text-2xl' onClick={handleComment}>
+                  {/*path for svg icon*/}
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-black ">
                   <path fillRule="evenodd" d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97zM6.75 8.25a.75.75 0 01.75-.75h9a.75.75 0 010 1.5h-9a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H7.5z" clipRule="evenodd" />
                 </svg>
                 </Button>
                 <p>{p.comments.length}</p>
                 </div>
-                <Button className='text-2xl text-black'>
+                <Button className='text-2xl text-black' onClick = { handleCopyLink(p._id)}>
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
                   </svg>
-                  </Button>
-                  
-                
-                
+                  <div className='text-sm'>
+                    {copied ? 'Link Copied!' : ''}
+                  </div>
+                </Button>
+ 
             </div>
             
         </Paper>
@@ -226,5 +261,4 @@ const Post = ({p}) => {
     </div>
   )
 }
-
 export default Post

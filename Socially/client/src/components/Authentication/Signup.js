@@ -10,12 +10,26 @@ import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import Error from '../error/Error';
 
 
+/*
+Signup()
+NAME
+    Signup
+SYNOPSIS
+    Signup();
+DESCRIPTION
+    This React component allows a user to register for an account.
+    It provides a form for entering registration details, including an avatar image.
+    It dispatches the "register" action to create a new user account.
+RETURNS
+    Returns a React component that renders a registration form.
+*/
 
 const Signup = () => {
     const formRef = React.useRef();
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    // State variables
     const [name, setName] = useState("");
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -26,11 +40,14 @@ const Signup = () => {
     const [hasError, setHasError] = useState("");
     const [open, setOpen] = useState(true);
 
+    // Function to toggle password visibility
     const handleClickShowPassword = () => setShowPassword(!showPassword);
     const handleMouseDownPassword =() => setShowPassword(!showPassword);
+
+    //Redux state
     const {error, isLoading, isAuthenticated, user,success } = useSelector(state => state.user);
 
-
+    // Function to handle form submission
     const handleSubmit = (e)=>{
         e.preventDefault();
         formRef.current.reportValidity()
@@ -46,13 +63,12 @@ const Signup = () => {
             }
         }
         
-        console.log(name,username,email,pw,cpw)
     }
 
+    // Function to handle image uploads
     const handleImages = (e)=>{
         const files = Array.from(e.target.files);
         setAvatar([]);
-        console.log(files);
         files.forEach((file)=>{
             const reader = new FileReader();
 
@@ -67,6 +83,7 @@ const Signup = () => {
 
     }
     
+    // Effect to handle and clear errors
     useEffect(() => {
         if (error) {
             setHasError(error)
@@ -84,7 +101,8 @@ const Signup = () => {
                         <img src={require('../../images/avatar.png')} className='w-8 h-8'/>
                         <strong>Sign Up</strong>
                     </nav>
-                        <Divider className='m-7'/>
+                    <Divider className='m-7'/>
+
                     <form action="" ref={formRef} onSubmit={handleSubmit}>
                         <div className='flex flex-col gap-7'>
                             <div className='flex flex-col gap-0'>
@@ -129,6 +147,8 @@ const Signup = () => {
             </Grid>
 
           </Grid>
+
+            {/* Display error component if there's an error */}
           {
              hasError && 
              <Error hasError={hasError} setOpen={setOpen} open={open}/>

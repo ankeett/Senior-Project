@@ -7,12 +7,25 @@ import { useDispatch } from 'react-redux';
 import { followUser,unfollowUser } from '../../actions/userAction';
 import RemoveIcon from '@mui/icons-material/Remove';
 
-
+/*
+User()
+NAME
+    User
+SYNOPSIS
+    User({ search });
+    search: Object - Represents the user data obtained from a search.
+DESCRIPTION
+    This React component displays information about a user obtained from a search result.
+    It allows the current user to follow or unfollow the displayed user.
+    The component includes a link to the user's profile.
+PARAMETERS
+    {Object} search - The user data obtained from a search.
+RETURNS
+    Returns a React component that renders user information and follow/unfollow buttons.
+*/
 const User = ({search}) => {
-
     const user = useSelector(state => state.user);
     const dispatch = useDispatch();
-
 
   return (
     <Paper elevation={2} className='w-3/4 h-full flex flex-row justify-between items-center'>
@@ -26,6 +39,7 @@ const User = ({search}) => {
         </div>
     </Link>
     <div className='mr-5'>
+        {/* If the current user is not the user being displayed, display follow/unfollow buttons. */}
         {
             user && user.user && user.user._id != search._id ?
             ( user.user.following.includes(search._id) ? (
@@ -42,7 +56,6 @@ const User = ({search}) => {
 
     </div>
 </Paper>
-
 
   )
 }

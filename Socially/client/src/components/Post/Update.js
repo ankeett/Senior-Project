@@ -12,17 +12,28 @@ import GifBoxIcon from '@mui/icons-material/GifBox';
 import { useNavigate } from 'react-router-dom'
 
 
-
-
-
-
+/*
+Update
+NAME
+    Update
+SYNOPSIS
+    Update();
+DESCRIPTION
+    This React component allows users to update a post. Users can modify the post's content, tags, images, and visibility settings.
+PARAMETERS
+    None.
+RETURNS
+    Returns a React component that provides an interface for updating a post.
+*/
 
 const Update = () => {
-    const [status,setStatus] = useState("")
-    const dispatch = useDispatch()
-    const {currentUser} = useSelector(state => state.user)
-    const {post} = useSelector(state => state.posts)
-    const {id} = useParams();
+  const dispatch = useDispatch()
+  const {currentUser} = useSelector(state => state.user)
+  const {post} = useSelector(state => state.posts)
+  const {id} = useParams();
+  
+  // State variables
+  const [status,setStatus] = useState("")
     const [image,setImage] = useState([])
     const [tags,setTags] = useState([])
     const [visibility,setVisibility] = useState('Everyone')
@@ -32,12 +43,11 @@ const Update = () => {
     const navigate = useNavigate();
 
     
-    
+   // Function to handle image upload 
     const handleImages = (e)=>{
    
         const files = Array.from(e.target.files);
         setNewImages([]);
-        console.log(files);
         files.forEach((file)=>{
             const reader = new FileReader();
     
@@ -51,7 +61,8 @@ const Update = () => {
         });
     
       }
-
+      
+      // Set the visibility state based on the post's visibility setting.
       useEffect(() => {
         if(status === 'Everyone'){
           setVisibility('public');
@@ -61,7 +72,7 @@ const Update = () => {
         }
       },[status])
 
-
+      // Add a tag to the post.
     const handleAdd = (e) =>{
         if(e.key === 'Enter' && e.target.value !== '')
         {
@@ -69,11 +80,13 @@ const Update = () => {
           e.target.value = '';
         }
       }
-  
+      
+      // Delete a tag from the post.
       const handleDelete = (tagToDelete)=>{
         setTags(tags.filter((tag) => tag !==tagToDelete));
       }
 
+      // Set the post's content, tags, images, and visibility settings.
     useEffect(() => {
         if(post && post._id !== id){
             dispatch(getAPost(id))
@@ -86,10 +99,10 @@ const Update = () => {
         }
     }, [dispatch,post])
 
+    // Update the post.
     const handleUpdatePost = (e)=>{
-        
-        dispatch(updatePost(id,content,tags,image,newImages,visibility));
-        navigate(`/post/${id}`);
+      dispatch(updatePost(id,content,tags,image,newImages,visibility));
+      navigate(`/post/${id}`);
         
     }
 

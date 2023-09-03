@@ -6,10 +6,28 @@ import Post from './Post';
 import { TextField,IconButton,InputAdornment,Card,CardHeader,Avatar, CardContent} from '@mui/material';
 import ArrowBackIosOutlinedIcon from '@mui/icons-material/ArrowBackIosOutlined';
 
+import moment from 'moment'
 
+/*
+PostPage
+NAME
+    PostPage
+SYNOPSIS
+    PostPage();
+DESCRIPTION
+    This React component displays a single post page, including the post itself and its comments.
+    Users can view the post, add comments, and navigate back to the home page.
+PARAMETERS
+    None.
+RETURNS
+    Returns a React component that renders a single post page.
+*/
 
 const PostPage = () => {
+    // Get the post ID from the URL
     const id = useParams().id;
+
+    // Get the post from the Redux store
     const {post} = useSelector(state => state.posts)
     const dispatch = useDispatch()
     const [comment,setComment] = useState('')
@@ -20,8 +38,6 @@ const PostPage = () => {
         dispatch(getAPost(id))
     },[dispatch])
 
-    console.log(post)
-
   return (
     <div>
         <a href='/home'>⬅︎ Back to home</a>
@@ -29,10 +45,7 @@ const PostPage = () => {
         {
             post && post._id && 
             (
-
                 <Post p={post}/>
-
-                
             )
         }
 
@@ -45,7 +58,6 @@ const PostPage = () => {
             variant='outlined' fullWidth value = {comment} onChange={(e)=>{
 
                 setComment(e.target.value);
-                console.log(comment)
                 }}
             onKeyPress={(e)=>{
                 if(e.key === 'Enter'){
@@ -53,7 +65,6 @@ const PostPage = () => {
                 }
             }
         }
-
             InputProps={{
                 endAdornment:(
                     <InputAdornment position="end">
@@ -69,9 +80,9 @@ const PostPage = () => {
             />
         </div>
 
-        
+        {/*Render comments */}
         {
-            post && post._id && post.comments && post.comments.length > 0 && post.comments.map(c=>(
+            post && post._id && post.comments && post.comments.length > 0 && post.comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map(c=>(
                 <div key={c._id} >
                     <Card>
                         <CardHeader
@@ -81,7 +92,7 @@ const PostPage = () => {
                                 </Avatar>
                             }
                             title={c.user.name}
-                            subheader={c.createdAt}
+                            subheader={moment(c.createdAt).format('MMMM D, YYYY, h:mm a')}
                         />
 
                     <CardContent>{c.comment}</CardContent>

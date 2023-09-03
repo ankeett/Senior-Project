@@ -9,17 +9,24 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import { followUser,unfollowUser } from '../../actions/userAction'
 import { useNavigate } from 'react-router-dom'
 
+/*
+Profile
+NAME
+    Profile
+SYNOPSIS
+    Profile();
+DESCRIPTION
+    This React component displays a user's profile page. It shows the user's details, including their name, username, profile picture, and a list of their posts.
+PARAMETERS
+    None.
+RETURNS
+    Returns a React component that renders a user's profile page.
+*/
 const Profile = () => {
-
-  //load user details
-  //load user posts
-  //load user followers
-  //load user following
   const id = useParams().id;
   const {post} = useSelector(state => state.posts)
   const {user} = useSelector(state => state.user)
 
-  console.log(post)
 
   const dispatch = useDispatch()
 

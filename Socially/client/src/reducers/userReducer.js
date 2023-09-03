@@ -1,15 +1,31 @@
 import {LOGIN_REQUEST, LOGIN_FAIL, LOGIN_SUCCESS, CLEAR_ERRORS, REGISTER_FAIL, REGISTER_REQUEST
-    , REGISTER_SUCCESS, LOAD_REQUEST, LOAD_SUCCESS, LOAD_FAIL, LOGOUT_FAIL, LOGOUT_SUCCESS
-    ,UPDATE_PROFILE_REQUEST, UPDATE_PROFILE_SUCCESS, UPDATE_PROFILE_FAIL, UPDATE_PROFILE_RESET,
-    CHANGE_PASSWORD_FAIL, CHANGE_PASSWORD_REQUEST, CHANGE_PASSWORD_SUCCESS, CHANGE_PASSWORD_RESET,
+    , REGISTER_SUCCESS, LOAD_REQUEST, LOAD_SUCCESS, LOGOUT_FAIL, LOGOUT_SUCCESS,
+    CHANGE_PASSWORD_FAIL, CHANGE_PASSWORD_REQUEST, CHANGE_PASSWORD_SUCCESS, 
     FORGOT_PASSWORD_FAIL, FORGOT_PASSWORD_REQUEST, FORGOT_PASSWORD_SUCCESS,
     RESET_PASSWORD_REQUEST, RESET_PASSWORD_SUCCESS, RESET_PASSWORD_FAIL,
     ALL_USERS_FAIL, ALL_USERS_REQUEST, ALL_USERS_SUCCESS,
-    UPDATE_USER_FAIL, UPDATE_USER_REQUEST, UPDATE_USER_RESET, UPDATE_USER_SUCCESS,
-    DELETE_USER_FAIL, DELETE_USER_REQUEST, DELETE_USER_RESET, DELETE_USER_SUCCESS ,
     USER_DETAILS_FAIL, USER_DETAILS_REQUEST, USER_DETAILS_SUCCESS,
-    ACTIVATE_SUCCESS, ACTIVATE_FAIL, ACTIVATE_REQUEST
+    ACTIVATE_SUCCESS, ACTIVATE_FAIL, ACTIVATE_REQUEST, ALL_FRIENDS_FAIL, ALL_FRIENDS_REQUEST, ALL_FRIENDS_SUCCESS
 } from "../constants/userConstants";
+
+/*
+userReducer()
+NAME
+    userReducer
+SYNOPSIS
+    userReducer(state, action)
+    - state: object - The current state of the user and related actions.
+    - action: object - An object containing the type and payload of the action being dispatched.
+DESCRIPTION
+    This Redux reducer manages the state related to user authentication, user data, and related actions.
+
+PARAMETERS
+    - state (object): The current state of the user and related actions, typically initialized with an empty object for user data and loading/error flags.
+    - action (object): An object containing the type and payload of the action being dispatched.
+
+RETURNS
+    An object representing the new state of user-related data and actions based on the action type.
+*/
 
 export const userReducer = (state = {user:{}}, action) => {
     switch(action.type){
@@ -90,6 +106,24 @@ export const userReducer = (state = {user:{}}, action) => {
     }
 }
 
+/*
+forgotPasswordReducer()
+NAME
+    forgotPasswordReducer
+SYNOPSIS
+    forgotPasswordReducer(state, action)
+    - state: object - The current state of forgot password and related actions.
+    - action: object - An object containing the type and payload of the action being dispatched.
+DESCRIPTION
+    This Redux reducer manages the state related to the forgot password feature, including requesting a password reset and changing the password.
+
+PARAMETERS
+    - state (object): The current state of forgot password and related actions, typically initialized with an empty object for loading, error, message, and success flags.
+    - action (object): An object containing the type and payload of the action being dispatched.
+
+RETURNS
+    An object representing the new state of forgot password-related data and actions based on the action type.
+*/
 export const forgotPasswordReducer = (state = {}, action) => {
     switch(action.type){
         case FORGOT_PASSWORD_REQUEST:
@@ -137,6 +171,8 @@ export const forgotPasswordReducer = (state = {}, action) => {
     }
 }
 
+
+
 export const postUserReducer = (state = {poster:{}}, action) => {
     switch(action.type){
         case USER_DETAILS_REQUEST:
@@ -162,6 +198,24 @@ export const postUserReducer = (state = {poster:{}}, action) => {
     }
 }
 
+/*
+postUserReducer()
+NAME
+    postUserReducer
+SYNOPSIS
+    postUserReducer(state, action)
+    - state: object - The current state of user details for post author.
+    - action: object - An object containing the type and payload of the action being dispatched.
+DESCRIPTION
+    This Redux reducer manages the state related to user details for the author of a post.
+
+PARAMETERS
+    - state (object): The current state of user details for the post author, typically initialized with an empty object for loading, error, and user details.
+    - action (object): An object containing the type and payload of the action being dispatched.
+
+RETURNS
+    An object representing the new state of user details for the post author based on the action type.
+*/
 export const searchUserReducer = (state = {users:[]}, action) => {
     switch(action.type){
         case ALL_USERS_REQUEST:
@@ -177,6 +231,31 @@ export const searchUserReducer = (state = {users:[]}, action) => {
                     users:action.payload
                 }
             case ALL_USERS_FAIL:
+                return{
+                    ...state,
+                    loading:false,
+                    error:action.payload
+                }
+        default:
+            return state;
+    }
+}
+
+export const friendsReducer = (state = {friends:[]}, action) => {
+    switch(action.type){
+        case ALL_FRIENDS_REQUEST:
+                return{
+                    ...state,
+                    loading:true,
+                    error:null
+                }
+            case ALL_FRIENDS_SUCCESS:
+                return{
+                    ...state,
+                    loading:false,
+                    friends:action.payload
+                }
+            case ALL_FRIENDS_FAIL:
                 return{
                     ...state,
                     loading:false,

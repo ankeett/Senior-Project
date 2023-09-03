@@ -7,6 +7,24 @@ import {
 } from '../constants/postConstants';
 import axios from 'axios';
 
+/*
+postReducer()
+NAME
+    postReducer
+SYNOPSIS
+    postReducer(state, action)
+    - state: object - The current state of posts and related actions.
+    - action: object - An object containing the type and payload of the action being dispatched.
+DESCRIPTION
+    This Redux reducer manages the state related to posts and various post-related actions, including creating, fetching, updating, deleting, liking posts, creating comments, and fetching following posts.
+
+PARAMETERS
+    - state (object): The current state of posts and related actions, typically initialized with an empty array for posts and loading/error flags.
+    - action (object): An object containing the type and payload of the action being dispatched.
+
+RETURNS
+    An object representing the new state of posts and related actions based on the action type.
+*/
 export const postReducer = (state = {post:[]}, action) => {
     switch(action.type){
         case CREATE_POST_REQUEST:
@@ -87,28 +105,46 @@ export const postReducer = (state = {post:[]}, action) => {
             return state;
     }}
 
-    export const tagReducer = (state = {tags:[]}, action) => {
-        switch(action.type){
-            case FETCH_TAGS_REQUEST:
-                return{
-                    ...state,
-                    loading:true,
-                }
-            case FETCH_TAGS_SUCCESS:
-                return{
-                    ...state,
-                    loading:false,
-                    tags:action.payload
-                }
-            case FETCH_TAGS_FAIL:
-                return{
-                    ...state,
-                    loading:false,
-                    error:action.payload
-                }
-            default:
-                return state;
-        }
+/*
+tagReducer()
+NAME
+    tagReducer
+SYNOPSIS
+    tagReducer(state, action)
+    - state: object - The current state of tags and related actions.
+    - action: object - An object containing the type and payload of the action being dispatched.
+DESCRIPTION
+    This Redux reducer manages the state related to tags, including fetching and handling tags for various purposes.
+
+PARAMETERS
+    - state (object): The current state of tags and related actions, typically initialized with an empty array for tags and loading/error flags.
+    - action (object): An object containing the type and payload of the action being dispatched.
+
+RETURNS
+    An object representing the new state of tags and related actions based on the action type.
+*/
+export const tagReducer = (state = {tags:[]}, action) => {
+    switch(action.type){
+        case FETCH_TAGS_REQUEST:
+            return{
+                ...state,
+                loading:true,
+            }
+        case FETCH_TAGS_SUCCESS:
+            return{
+                ...state,
+                loading:false,
+                tags:action.payload
+            }
+        case FETCH_TAGS_FAIL:
+            return{
+                ...state,
+                loading:false,
+                error:action.payload
+            }
+        default:
+            return state;
     }
+}
 
 

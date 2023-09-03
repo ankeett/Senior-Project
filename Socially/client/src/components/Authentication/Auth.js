@@ -1,3 +1,16 @@
+/*
+Auth()
+NAME
+    Auth
+SYNOPSIS
+    Auth();
+DESCRIPTION
+    This React component handles user authentication. It allows users to sign in with their email and password,
+    shows/hides password, and handles errors.
+RETURNS
+    Returns a React component that renders a sign-in form.
+*/
+
 import React,{useEffect, useState} from 'react'
 import { Paper,Divider, TextField, Button, Grid,InputAdornment,IconButton,Container, Collapse } from '@mui/material'
 import { Link } from 'react-router-dom'
@@ -6,8 +19,6 @@ import  VisibilityOffIcon  from '@mui/icons-material/VisibilityOff';
 import {useDispatch,useSelector} from 'react-redux'
 import {login,clearErrors} from '../../actions/userAction'
 import {useNavigate} from 'react-router-dom'
-import Alert from '@mui/material/Alert';
-import CloseIcon from '@mui/icons-material/Close';
 import Error from '../error/Error';
 
 const Auth = () => {
@@ -15,23 +26,28 @@ const Auth = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    // State variables
     const [email, setEmail] = useState("");
     const [pw, setPw] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [hasError, setHasError] = useState("");
     const [open, setOpen] = useState(true);
+
+    // Function to toggle password visibility
     const handleClickShowPassword = () => setShowPassword(!showPassword);
     const handleMouseDownPassword =() => setShowPassword(!showPassword);
 
+    //Redux state
     const {error, loading, isAuthenticated, user,isActivated} = useSelector(state => state.user);
 
+    // Function to handle form submission
     const handleSubmit = (e)=>{
         e.preventDefault();
         formRef.current.reportValidity()
         dispatch(login(email,pw))
     }
-    console.log(user)
 
+    // Redirect the user to the home page if they're already authenticated.
     useEffect(() => {
         if (isAuthenticated && user?.isActivated) {
             navigate('/')
@@ -41,6 +57,7 @@ const Auth = () => {
         }
     }, [isAuthenticated,user,dispatch,error])
 
+    // Set the error state if there's an error.
     useEffect(() => {
         if (error) {
             setHasError(error)
@@ -85,6 +102,7 @@ const Auth = () => {
                             }}          
                     
                     />
+                    <a href='/forgotpassword'>Forgot Password?</a>
                     </div>
                     <div className='flex flex-col mt-14 gap-7 align-middle justify-center'>
                         <Button className='text-white bg-[#1da1f2] rounded-full normal-case h-12 text-base' onClick ={handleSubmit} fullWidth>Sign In</Button>
@@ -94,6 +112,8 @@ const Auth = () => {
                 </Paper>
             </Grid>
           </Grid>
+
+          {/* Display error component if there's an error */}
           {
             hasError && 
             <Error hasError={hasError} setOpen={setOpen} open={open}/>

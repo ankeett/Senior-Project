@@ -4,15 +4,28 @@ import { getPostsByTag } from '../../actions/postAction'
 import { useParams } from 'react-router-dom'
 import Post from '../Post/Post'
 
+/*
+PostsByTags()
+NAME
+    PostsByTags
+SYNOPSIS
+    PostsByTags();
+DESCRIPTION
+    This React component displays posts associated with a specific tag.
+    It fetches posts by the tag ID and renders them.
+RETURNS
+    Returns a React component that renders posts by a specific tag.
+*/
 const PostsByTags = () => {
+    // Get the tag ID from the route parameters
     const tag = useParams().id
-    console.log(tag)
     const dispatch = useDispatch()
+
+    // Dispatch the "getPostsByTag" action to fetch posts by the tag
     useEffect(()=>{
         dispatch(getPostsByTag(tag))
     },[dispatch])
     const {post} = useSelector(state=>state.posts)
-    console.log(post)
 
   return (
     <div className='mx-auto w-3/4'>
